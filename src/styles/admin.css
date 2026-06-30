@@ -1,0 +1,86 @@
+@import '@mockups/styles.css';
+
+.admin-layout .admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-layout .admin-nav-item {
+  display: block;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.admin-layout .admin-nav-item:hover {
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  text-decoration: none;
+}
+
+.admin-layout .admin-nav-item.active {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 2px solid var(--border-soft);
+}
+
+.admin-sidebar-footer {
+  padding: 14px;
+  border-top: 2px dashed var(--border-soft);
+}
+
+.admin-sidebar-footer a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.admin-content {
+  padding: 24px;
+}
+
+.admin-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-modal-footer,
+.admin-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.admin-row-actions {
+  justify-content: flex-start;
+}
+
+.page-header-row .btn {
+  flex-shrink: 0;
+}
+
+.settings-pref-placeholder {
+  padding: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+}
+
+.settings-back-link {
+  text-decoration: none;
+  margin-right: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}

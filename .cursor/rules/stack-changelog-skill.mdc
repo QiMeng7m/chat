@@ -1,0 +1,20 @@
+---
+description: stack-changelog 技术栈与设计变更留痕 skill（本项目）；git push 前强制门禁
+alwaysApply: true
+---
+
+# stack-changelog 命令
+
+当用户消息为 **stack-changelog**（单独一词）、**技术栈留痕**、**记录技术栈变更**、**设计留痕** 或 **栈变更同步** 时：
+
+1. **立即读取并执行** skill：`.cursor/skills/stack-changelog/SKILL.md`（或 `~/.cursor/skills/stack-changelog/SKILL.md`）
+2. 将变更同步到本仓库 `docs/DESIGN.md`，**§9 只追加不删改**
+3. 每次留痕须包含 **变更理由**，便于日后 review
+
+# git push 门禁
+
+当 Agent 即将执行 **`git push`**（含 **crm** 阶段 4）时：
+
+1. crm **阶段 4-前置**须先运行 `npm run check:stack-changelog`；失败则执行 stack-changelog，commit 文档后再 push
+2. 若单独 `git push` 且检查失败 → **不得 push**；先执行 stack-changelog skill
+3. Cursor `beforeShellExecution` hook 会自动拦截；勿使用 `--no-verify` 绕过，除非用户明确要求

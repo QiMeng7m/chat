@@ -1,0 +1,956 @@
+/* ============================================================
+   全主题 · 壁纸底层
+   挂在 html::before/::after，避免 body 负 z-index 被底色盖住
+   ============================================================ */
+
+html {
+  min-height: 100%;
+  isolation: isolate;
+  background-color: var(--bg, #fff8fb);
+}
+
+html::before,
+html::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+html::before {
+  z-index: -2;
+}
+
+html::after {
+  z-index: -1;
+}
+
+body {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+@keyframes wallpaperDrift {
+  0%, 100% { background-position: 0% 35%, 100% 65%, 50% 50%, 20% 80%; }
+  50% { background-position: 100% 65%, 0% 35%, 75% 25%, 80% 20%; }
+}
+
+@keyframes wallpaperSparkle {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.95; }
+}
+
+@keyframes wallpaperShimmer {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(1.5%, -2%) scale(1.03); }
+}
+
+/* —— 喵汪工坊 · catdog（默认） —— */
+html:not([data-theme])::before,
+html[data-theme="catdog"]::before {
+  background:
+    radial-gradient(ellipse 58% 50% at 4% 10%, rgba(255, 126, 179, 0.55) 0%, transparent 58%),
+    radial-gradient(ellipse 52% 46% at 96% 90%, rgba(167, 139, 250, 0.5) 0%, transparent 55%),
+    radial-gradient(ellipse 44% 40% at 78% 12%, rgba(125, 211, 252, 0.38) 0%, transparent 52%),
+    radial-gradient(ellipse 40% 36% at 22% 82%, rgba(253, 186, 116, 0.32) 0%, transparent 50%),
+    linear-gradient(150deg, #fff8fb 0%, #ffe4f0 28%, #ede9fe 52%, #fce7f3 78%, #fff0f6 100%);
+  background-size: 220% 220%, 220% 220%, 200% 200%, 200% 200%, 100% 100%;
+  animation: wallpaperDrift 20s ease-in-out infinite;
+}
+
+html:not([data-theme])::after,
+html[data-theme="catdog"]::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ff7eb3' fill-opacity='0.18'%3E%3Ccircle cx='18' cy='14' r='4'/%3E%3Ccircle cx='24' cy='12' r='3'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Ccircle cx='18' cy='18' r='2.5'/%3E%3Cellipse cx='54' cy='54' rx='5' ry='4'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(2px 2px at 18% 28%, rgba(255, 126, 179, 0.65) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 42% 62%, rgba(167, 139, 250, 0.55) 50%, transparent 50%),
+    radial-gradient(2px 2px at 68% 22%, rgba(125, 211, 252, 0.5) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 82% 72%, rgba(255, 126, 179, 0.45) 50%, transparent 50%);
+  background-size: 72px 72px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  animation: wallpaperSparkle 6s ease-in-out infinite;
+}
+
+html:not([data-theme]) .app-shell,
+html:not([data-theme]) .main,
+html:not([data-theme]) .chat-area,
+html:not([data-theme]) .content,
+html[data-theme="catdog"] .app-shell,
+html[data-theme="catdog"] .main,
+html[data-theme="catdog"] .chat-area,
+html[data-theme="catdog"] .content {
+  background: transparent;
+}
+
+/* ============================================================
+   风格主题：名侦探柯南
+   html[data-theme="conan"]
+   ============================================================ */
+
+html[data-theme="conan"] {
+  --bg: #e8eef7;
+  --bg-pattern: #c5d4ea;
+  --surface: rgba(255, 255, 255, 0.96);
+  --surface-2: rgba(240, 244, 250, 0.94);
+  --surface-3: #dce6f5;
+  --border: #b8c9e0;
+  --border-soft: #d0dced;
+  --text: #1a2332;
+  --text-secondary: #3d4f66;
+  --text-muted: #6b7c94;
+  --primary: #c41e3a;
+  --primary-hover: #9e1830;
+  --primary-soft: #fde8ec;
+  --secondary: #1e3a6e;
+  --secondary-soft: #e3ebf7;
+  --accent-mint: #4ade80;
+  --accent-peach: #fbbf24;
+  --accent-sky: #60a5fa;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --shadow: 0 4px 0 #b8c9e0, 0 8px 24px rgba(30, 58, 110, 0.12);
+  --shadow-sm: 0 2px 0 #b8c9e0, 0 4px 12px rgba(30, 58, 110, 0.08);
+  --font: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* —— 柯南动态壁纸（明亮蓝灰 · 流动光斑，非黑色夜空） —— */
+@keyframes conanAurora {
+  0%, 100% {
+    background-position: 0% 40%, 100% 60%, 50% 50%;
+  }
+  50% {
+    background-position: 100% 60%, 0% 40%, 80% 20%;
+  }
+}
+
+@keyframes conanOrbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+  50% { transform: translate(2%, -3%) scale(1.08); opacity: 0.75; }
+}
+
+@keyframes conanSparkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.65; }
+}
+
+html[data-theme="conan"]::before {
+  background:
+    radial-gradient(ellipse 72% 58% at 12% 18%, rgba(96, 165, 250, 0.38) 0%, transparent 58%),
+    radial-gradient(ellipse 62% 52% at 90% 78%, rgba(196, 30, 58, 0.22) 0%, transparent 52%),
+    radial-gradient(ellipse 78% 62% at 52% 92%, rgba(30, 58, 110, 0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 52% 42% at 68% 12%, rgba(167, 139, 250, 0.2) 0%, transparent 50%),
+    linear-gradient(160deg, #eef2f9 0%, #e8eef7 28%, #dce6f5 52%, #e3ebf7 78%, #eef2f9 100%);
+  background-size: 220% 220%, 220% 220%, 200% 200%, 220% 220%, 100% 100%;
+  animation: wallpaperDrift 20s ease-in-out infinite;
+}
+
+html[data-theme="conan"]::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='18' fill='none' stroke='%231e3a6e' stroke-width='1.2' opacity='0.1'/%3E%3Cline x1='54' y1='54' x2='68' y2='68' stroke='%231e3a6e' stroke-width='2' opacity='0.12'/%3E%3C/svg%3E"),
+    radial-gradient(2px 2px at 12% 18%, rgba(30, 58, 110, 0.45) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 28% 45%, rgba(196, 30, 58, 0.35) 50%, transparent 50%),
+    radial-gradient(2px 2px at 62% 32%, rgba(45, 90, 158, 0.38) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 78% 20%, rgba(30, 58, 110, 0.4) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 90% 48%, rgba(196, 30, 58, 0.3) 50%, transparent 50%);
+  background-size: 80px 80px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  animation: wallpaperSparkle 6s ease-in-out infinite;
+}
+
+/* legacy: 漂浮光斑层（可选 DOM 注入） */
+html[data-theme="conan"] .theme-wallpaper-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+html[data-theme="conan"] .theme-wallpaper-orbs span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: conanOrbFloat 14s ease-in-out infinite;
+}
+
+html[data-theme="conan"] .theme-wallpaper-orbs span:nth-child(1) {
+  width: 360px;
+  height: 360px;
+  background: rgba(96, 165, 250, 0.2);
+  top: -10%;
+  left: -6%;
+  animation-delay: 0s;
+}
+
+html[data-theme="conan"] .theme-wallpaper-orbs span:nth-child(2) {
+  width: 300px;
+  height: 300px;
+  background: rgba(196, 30, 58, 0.08);
+  top: 50%;
+  right: -10%;
+  animation-delay: -3s;
+  animation-duration: 16s;
+}
+
+html[data-theme="conan"] .theme-wallpaper-orbs span:nth-child(3) {
+  width: 280px;
+  height: 280px;
+  background: rgba(30, 58, 110, 0.1);
+  bottom: 0%;
+  left: 20%;
+  animation-delay: -6s;
+  animation-duration: 18s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html::before,
+  html::after,
+  html[data-theme="conan"] .theme-wallpaper-orbs span {
+    animation: none !important;
+  }
+}
+
+/* 面板半透明，露出动态背景 */
+html[data-theme="conan"] .card,
+html[data-theme="conan"] .composer,
+html[data-theme="conan"] .login-card {
+  backdrop-filter: blur(8px);
+}
+
+html[data-theme="conan"] .login-brand {
+  background: linear-gradient(160deg, rgba(220, 230, 245, 0.72) 0%, rgba(232, 238, 247, 0.68) 100%) !important;
+  backdrop-filter: blur(18px);
+}
+
+html[data-theme="conan"] .login-form-panel {
+  background: transparent;
+}
+
+/* app 主区域不遮挡壁纸，与 body 同色兜底 */
+html[data-theme="conan"] .app-shell,
+html[data-theme="conan"] .main {
+  background: transparent;
+}
+
+html[data-theme="conan"] .chat-area,
+html[data-theme="conan"] .content {
+  background: transparent;
+}
+
+html[data-theme="conan"] a {
+  color: var(--secondary);
+}
+
+html[data-theme="conan"] a:hover {
+  color: var(--primary);
+}
+
+/* Logo：眼镜徽章（无猫耳） */
+html[data-theme="conan"] .logo-mascot {
+  background: linear-gradient(145deg, #1e3a6e, #2d5a9e);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 #152a52, var(--shadow-sm);
+}
+
+html[data-theme="conan"] .logo-mascot::before,
+html[data-theme="conan"] .logo-mascot::after {
+  display: none;
+}
+
+html[data-theme="conan"] .logo-mascot.dog {
+  background: linear-gradient(145deg, #2d5a9e, #1e3a6e);
+}
+
+/* 按钮 */
+html[data-theme="conan"] .btn-primary,
+html[data-theme="conan"] .ant-btn-primary:not(:disabled) {
+  background: linear-gradient(145deg, #d42a46, #c41e3a);
+  box-shadow: 0 4px 0 #9e1830, 0 6px 16px rgba(196, 30, 58, 0.35);
+}
+
+html[data-theme="conan"] .btn-primary:hover,
+html[data-theme="conan"] .ant-btn-primary:not(:disabled):hover {
+  background: linear-gradient(145deg, #c41e3a, #a01830);
+}
+
+html[data-theme="conan"] .btn-secondary,
+html[data-theme="conan"] .ant-btn-default:not(:disabled) {
+  background: linear-gradient(145deg, #2d5a9e, #1e3a6e);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 0 #152a52, 0 6px 16px rgba(30, 58, 110, 0.35);
+}
+
+html[data-theme="conan"] .login-submit {
+  background: linear-gradient(145deg, #d42a46, #c41e3a 50%, #9e1830 100%);
+  box-shadow: 0 4px 0 #7a1226, 0 8px 24px rgba(196, 30, 58, 0.35);
+}
+
+html[data-theme="conan"] .login-card::before {
+  background: linear-gradient(90deg, #1e3a6e, #c41e3a, #d4af37);
+}
+
+html[data-theme="conan"] .landing-hero h1 {
+  background: linear-gradient(135deg, #1e3a6e, #c41e3a);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+html[data-theme="conan"] .login-brand-logo-text strong {
+  background: linear-gradient(135deg, #1e3a6e, #c41e3a);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+html[data-theme="conan"] .message.assistant .message-avatar {
+  background: linear-gradient(145deg, #1e3a6e, #2d5a9e);
+}
+
+html[data-theme="conan"] .message.user .message-avatar {
+  background: linear-gradient(145deg, #c41e3a, #9e1830);
+}
+
+html[data-theme="conan"] .message.user .message-content {
+  background: linear-gradient(145deg, #2d5a9e, #1e3a6e);
+  box-shadow: 0 4px 0 #152a52;
+}
+
+html[data-theme="conan"] .feature-chip.active,
+html[data-theme="conan"] .session-item.active {
+  background: var(--secondary-soft);
+  border-color: var(--secondary);
+}
+
+html[data-theme="conan"] .feature-chip.active {
+  box-shadow: 0 4px 0 var(--secondary);
+}
+
+html[data-theme="conan"] .feature-pill.active {
+  border-color: var(--secondary);
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+html[data-theme="conan"] .model-tag {
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+html[data-theme="conan"] .quota-badge {
+  background: linear-gradient(135deg, #e3ebf7, #dce6f5);
+  color: #1e3a6e;
+  border-color: #b8c9e0;
+}
+
+html[data-theme="conan"] .composer-toolbar {
+  background: linear-gradient(90deg, var(--secondary-soft), var(--primary-soft));
+}
+
+html[data-theme="conan"] .composer-toolbar .feature-badge {
+  color: var(--secondary);
+  border-color: var(--secondary);
+}
+
+html[data-theme="conan"] .admin-nav-item.active {
+  background: linear-gradient(90deg, var(--secondary-soft), var(--primary-soft));
+  color: var(--secondary);
+  border-color: var(--border);
+}
+
+html[data-theme="conan"] .stat-card .value {
+  color: var(--secondary);
+}
+
+html[data-theme="conan"] .card-cute-header {
+  background: linear-gradient(135deg, var(--secondary-soft), var(--primary-soft));
+}
+
+html[data-theme="conan"] .message-content pre {
+  background: #1a2332;
+  color: #e8eef7;
+  border-color: #3d4f66;
+}
+
+html[data-theme="conan"] .sparkle {
+  animation: none;
+}
+
+html[data-theme="conan"] .login-deco.theme-only-conan {
+  opacity: 0.45;
+}
+
+html[data-theme="catdog"] .login-deco.theme-only-catdog {
+  opacity: 0.55;
+}
+
+.login-settings-link {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-decoration: none;
+  background: var(--surface);
+  border: 2px solid var(--border-soft);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.login-settings-link:hover {
+  background: var(--primary-soft);
+  transform: scale(1.03);
+  text-decoration: none;
+}
+
+/* ============================================================
+   个人设置 · 主题选择（唯一入口）
+   ============================================================ */
+.settings-page .content {
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.settings-section {
+  margin-bottom: 28px;
+}
+
+.settings-section h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+.settings-section p {
+  margin: 0 0 16px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.theme-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.theme-card {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 0;
+  border: 2px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  cursor: pointer;
+  font-family: inherit;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.theme-card.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft), var(--shadow);
+}
+
+.theme-card-preview {
+  height: 72px;
+  width: 100%;
+}
+
+.theme-card-preview--catdog {
+  background: linear-gradient(135deg, #ffe4f0, #fff0f6 40%, #ede9fe);
+}
+
+.theme-card-preview--anime {
+  background: linear-gradient(135deg, #ede9fe, #fce7f3 50%, #dbeafe);
+}
+
+.theme-card-preview--guofeng {
+  background: linear-gradient(160deg, #f7f3ea, #ebe4d4 60%, #fde8e8);
+}
+
+.theme-card-preview--neon {
+  background: linear-gradient(160deg, #1e293b, #334155 50%, #0f172a);
+}
+
+.theme-card-preview--conan {
+  background: linear-gradient(135deg, #dce6f5, #e8eef7 50%, #fde8ec);
+}
+
+.theme-card-body {
+  padding: 12px 14px;
+}
+
+.theme-card-body strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.theme-card-body span {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.user-settings-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--border-soft);
+  background: var(--surface);
+  text-decoration: none;
+  font-size: 18px;
+  transition: background 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.user-settings-link:hover {
+  background: var(--primary-soft);
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
+.settings-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.settings-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  background: var(--primary-soft);
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   星语二次元 · anime
+   ============================================================ */
+html[data-theme="anime"] {
+  --bg: #faf5ff;
+  --surface: rgba(255, 255, 255, 0.94);
+  --surface-2: #f5f3ff;
+  --border: #ddd6fe;
+  --border-soft: #ede9fe;
+  --text: #4c1d95;
+  --text-secondary: #6d28d9;
+  --text-muted: #8b5cf6;
+  --primary: #a78bfa;
+  --primary-hover: #8b5cf6;
+  --primary-soft: #ede9fe;
+  --secondary: #f472b6;
+  --secondary-soft: #fce7f3;
+  --shadow: 0 4px 0 #ddd6fe, 0 8px 24px rgba(167, 139, 250, 0.15);
+  --shadow-sm: 0 2px 0 #ddd6fe, 0 4px 12px rgba(167, 139, 250, 0.1);
+  --radius: 18px;
+  --radius-lg: 24px;
+}
+
+@keyframes animeDrift {
+  0%, 100% { background-position: 0% 30%, 100% 70%; }
+  50% { background-position: 100% 70%, 0% 30%; }
+}
+
+html[data-theme="anime"]::before {
+  background:
+    radial-gradient(ellipse 62% 52% at 18% 22%, rgba(244, 114, 182, 0.42) 0%, transparent 58%),
+    radial-gradient(ellipse 58% 48% at 82% 78%, rgba(167, 139, 250, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 68% 58% at 48% 48%, rgba(147, 197, 253, 0.32) 0%, transparent 62%),
+    radial-gradient(ellipse 40% 35% at 88% 15%, rgba(249, 168, 212, 0.28) 0%, transparent 50%),
+    linear-gradient(155deg, #faf5ff 0%, #f5f3ff 25%, #fce7f3 50%, #dbeafe 75%, #faf5ff 100%);
+  background-size: 220% 220%, 220% 220%, 200% 200%, 200% 200%, 100% 100%;
+  animation: wallpaperDrift 22s ease-in-out infinite;
+}
+
+html[data-theme="anime"]::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cellipse cx='32' cy='28' rx='6' ry='8' fill='%23f472b6' opacity='0.14' transform='rotate(25 32 28)'/%3E%3Cellipse cx='48' cy='48' rx='5' ry='7' fill='%23a78bfa' opacity='0.12' transform='rotate(-15 48 48)'/%3E%3Cellipse cx='14' cy='50' rx='4' ry='6' fill='%2393c5fd' opacity='0.13' transform='rotate(40 14 50)'/%3E%3C/svg%3E"),
+    radial-gradient(2px 2px at 15% 20%, rgba(167, 139, 250, 0.7) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 35% 65%, rgba(244, 114, 182, 0.6) 50%, transparent 50%),
+    radial-gradient(2px 2px at 70% 30%, rgba(147, 197, 253, 0.65) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 85% 80%, rgba(167, 139, 250, 0.5) 50%, transparent 50%);
+  background-size: 64px 64px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  animation: wallpaperSparkle 7s ease-in-out infinite;
+}
+
+html[data-theme="anime"] .logo-mascot {
+  background: linear-gradient(145deg, #c4b5fd, #f9a8d4);
+  border-radius: 50%;
+}
+
+html[data-theme="anime"] .logo-mascot::before,
+html[data-theme="anime"] .logo-mascot::after {
+  display: none;
+}
+
+html[data-theme="anime"] .btn-primary,
+html[data-theme="anime"] .ant-btn-primary:not(:disabled) {
+  background: linear-gradient(145deg, #c4b5fd, #a78bfa);
+  box-shadow: 0 4px 0 #8b5cf6, 0 6px 16px rgba(167, 139, 250, 0.35);
+}
+
+html[data-theme="anime"] .message.assistant .message-avatar {
+  background: linear-gradient(145deg, #c4b5fd, #a78bfa);
+}
+
+html[data-theme="anime"] .message.user .message-content {
+  background: linear-gradient(145deg, #f9a8d4, #f472b6);
+  box-shadow: 0 4px 0 #ec4899;
+}
+
+html[data-theme="anime"] .app-shell,
+html[data-theme="anime"] .main,
+html[data-theme="anime"] .chat-area,
+html[data-theme="anime"] .content {
+  background: transparent;
+}
+
+html[data-theme="anime"] .sidebar,
+html[data-theme="anime"] .topbar {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+}
+
+/* ============================================================
+   墨韵国风 · guofeng
+   ============================================================ */
+html[data-theme="guofeng"] {
+  --bg: #f7f3ea;
+  --surface: rgba(255, 252, 245, 0.96);
+  --surface-2: #f0ebe0;
+  --border: #d4c4a8;
+  --border-soft: #e8dfd0;
+  --text: #2c2416;
+  --text-secondary: #5c4d32;
+  --text-muted: #8a7355;
+  --primary: #b91c1c;
+  --primary-hover: #991b1b;
+  --primary-soft: #fde8e8;
+  --secondary: #166534;
+  --secondary-soft: #dcfce7;
+  --shadow: 0 3px 0 #d4c4a8, 0 6px 20px rgba(44, 36, 22, 0.08);
+  --shadow-sm: 0 2px 0 #d4c4a8, 0 3px 10px rgba(44, 36, 22, 0.06);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: "Noto Serif SC", "Songti SC", "PingFang SC", serif;
+}
+
+html[data-theme="guofeng"]::before {
+  background:
+    radial-gradient(ellipse 75% 55% at 8% 92%, rgba(185, 28, 28, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 65% 48% at 92% 8%, rgba(22, 101, 52, 0.16) 0%, transparent 50%),
+    radial-gradient(ellipse 90% 70% at 50% 100%, rgba(44, 36, 22, 0.08) 0%, transparent 60%),
+    linear-gradient(175deg, #f7f3ea 0%, #f0ebe0 35%, #ebe4d4 55%, #f5f0e6 80%, #f7f3ea 100%);
+  background-size: 200% 200%, 200% 200%, 100% 100%, 100% 100%;
+  animation: wallpaperDrift 28s ease-in-out infinite;
+}
+
+html[data-theme="guofeng"]::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 60 Q30 40 60 60 T120 60' fill='none' stroke='%232c2416' stroke-width='0.8' opacity='0.12'/%3E%3Cpath d='M0 80 Q40 65 80 80 T120 80' fill='none' stroke='%232c2416' stroke-width='0.6' opacity='0.08'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='200' height='80' viewBox='0 0 200 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 60 Q50 20 100 45 T200 35 L200 80 L0 80 Z' fill='%232c2416' opacity='0.04'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='0.8' fill='%232c2416' opacity='0.15'/%3E%3C/svg%3E");
+  background-size: 120px 120px, 100% 280px, 40px 40px;
+  background-position: 0 0, center bottom, 0 0;
+  background-repeat: repeat, no-repeat, repeat;
+  opacity: 0.85;
+}
+
+html[data-theme="guofeng"] .logo-mascot {
+  background: #fffef9;
+  border: 2px solid #b91c1c;
+  border-radius: 6px;
+  color: #b91c1c;
+  box-shadow: 2px 2px 0 #991b1b;
+}
+
+html[data-theme="guofeng"] .logo-mascot::before,
+html[data-theme="guofeng"] .logo-mascot::after {
+  display: none;
+}
+
+html[data-theme="guofeng"] .btn-primary,
+html[data-theme="guofeng"] .ant-btn-primary:not(:disabled) {
+  background: linear-gradient(180deg, #dc2626, #b91c1c);
+  box-shadow: 0 3px 0 #7f1d1d;
+  border-radius: 6px;
+}
+
+html[data-theme="guofeng"] .btn,
+html[data-theme="guofeng"] .ant-btn {
+  border-radius: 6px;
+}
+
+html[data-theme="guofeng"] .btn-ghost,
+html[data-theme="guofeng"] .ant-btn-default:not(:disabled),
+html[data-theme="guofeng"] .card {
+  border-radius: var(--radius);
+}
+
+html[data-theme="guofeng"] .message.assistant .message-avatar {
+  background: #fffef9;
+  border: 2px solid #d4c4a8;
+  color: #2c2416;
+}
+
+html[data-theme="guofeng"] .message.user .message-content {
+  background: linear-gradient(180deg, #5c4d32, #2c2416);
+  box-shadow: 0 3px 0 #1a1510;
+}
+
+html[data-theme="guofeng"] .app-shell,
+html[data-theme="guofeng"] .main,
+html[data-theme="guofeng"] .chat-area,
+html[data-theme="guofeng"] .content {
+  background: transparent;
+}
+
+html[data-theme="guofeng"] .sidebar,
+html[data-theme="guofeng"] .topbar {
+  background: rgba(255, 252, 245, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+/* ============================================================
+   轻霓虹 · neon（低光污染）
+   ============================================================ */
+html[data-theme="neon"] {
+  --bg: #1e293b;
+  --surface: rgba(30, 41, 59, 0.92);
+  --surface-2: rgba(51, 65, 85, 0.85);
+  --border: #475569;
+  --border-soft: #334155;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --primary: #5eead4;
+  --primary-hover: #2dd4bf;
+  --primary-soft: rgba(94, 234, 212, 0.12);
+  --secondary: #a78bfa;
+  --secondary-soft: rgba(167, 139, 250, 0.12);
+  --shadow: 0 2px 0 #334155, 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 0 #334155;
+}
+
+@keyframes neonPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.75; }
+}
+
+html[data-theme="neon"]::before {
+  background:
+    radial-gradient(ellipse 55% 45% at 0% 100%, rgba(94, 234, 212, 0.18) 0%, transparent 58%),
+    radial-gradient(ellipse 50% 40% at 100% 0%, rgba(167, 139, 250, 0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 50% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+    linear-gradient(165deg, #0f172a 0%, #1e293b 35%, #1e293b 65%, #0f172a 100%);
+  background-size: 200% 200%, 200% 200%, 100% 100%, 100% 100%;
+  animation: wallpaperDrift 24s ease-in-out infinite;
+}
+
+html[data-theme="neon"]::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 24 H48 M24 0 V48' stroke='%235eead4' stroke-width='0.4' opacity='0.12'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='96' height='96' viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 48 H96 M48 0 V96' stroke='%23a78bfa' stroke-width='0.25' opacity='0.08'/%3E%3C/svg%3E");
+  background-size: 48px 48px, 96px 96px;
+  opacity: 0.9;
+  animation: wallpaperSparkle 12s ease-in-out infinite;
+}
+
+html[data-theme="neon"] .logo-mascot {
+  background: #334155;
+  border: 1px solid rgba(94, 234, 212, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(94, 234, 212, 0.15);
+}
+
+html[data-theme="neon"] .logo-mascot::before,
+html[data-theme="neon"] .logo-mascot::after {
+  display: none;
+}
+
+html[data-theme="neon"] .btn-primary,
+html[data-theme="neon"] .ant-btn-primary:not(:disabled) {
+  background: linear-gradient(145deg, #2dd4bf, #14b8a6);
+  color: #0f172a;
+  box-shadow: 0 0 16px rgba(94, 234, 212, 0.2), 0 2px 0 #0d9488;
+}
+
+html[data-theme="neon"] .sidebar,
+html[data-theme="neon"] .topbar,
+html[data-theme="neon"] .card,
+html[data-theme="neon"] .composer {
+  background: rgba(30, 41, 59, 0.94);
+  border-color: #475569;
+}
+
+html[data-theme="neon"] .message.assistant .message-content {
+  background: rgba(51, 65, 85, 0.9);
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+html[data-theme="neon"] .message.user .message-content {
+  background: linear-gradient(145deg, #334155, #1e293b);
+  border: 1px solid rgba(94, 234, 212, 0.25);
+  box-shadow: 0 0 8px rgba(94, 234, 212, 0.08);
+  color: #e2e8f0;
+}
+
+html[data-theme="neon"] .message.assistant .message-avatar {
+  background: #334155;
+  border: 1px solid rgba(94, 234, 212, 0.3);
+}
+
+html[data-theme="neon"] .session-item.active,
+html[data-theme="neon"] .feature-chip.active {
+  border-color: rgba(94, 234, 212, 0.4);
+  box-shadow: 0 0 8px rgba(94, 234, 212, 0.1);
+}
+
+html[data-theme="neon"] .app-shell,
+html[data-theme="neon"] .main,
+html[data-theme="neon"] .chat-area,
+html[data-theme="neon"] .content {
+  background: transparent;
+}
+
+html[data-theme="neon"] a {
+  color: #5eead4;
+}
+
+html[data-theme="neon"] .mockup-banner {
+  background: rgba(30, 41, 59, 0.95);
+  color: #94a3b8;
+  border-color: #475569;
+}
+
+html[data-theme="neon"] .input,
+html[data-theme="neon"] .textarea,
+html[data-theme="neon"] .select {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+html[data-theme="neon"] .theme-card.active {
+  box-shadow: 0 0 0 2px rgba(94, 234, 212, 0.35);
+}
+
+/* ============================================================
+   全局玻璃面板 · 露出底层壁纸
+   ============================================================ */
+.sidebar {
+  background: rgba(255, 255, 255, 0.62) !important;
+  backdrop-filter: blur(18px) saturate(1.15);
+}
+
+.topbar {
+  background: rgba(255, 255, 255, 0.58) !important;
+  backdrop-filter: blur(16px) saturate(1.1);
+}
+
+.mockup-banner {
+  background: rgba(255, 255, 255, 0.52) !important;
+  backdrop-filter: blur(12px);
+}
+
+.composer-wrap {
+  background: linear-gradient(to top, rgba(255, 248, 251, 0.72) 0%, transparent 100%) !important;
+}
+
+.bottom-nav {
+  background: rgba(255, 255, 255, 0.68) !important;
+  backdrop-filter: blur(14px);
+}
+
+.landing-hero,
+.landing-grid,
+.site-footer {
+  background: transparent;
+}
+
+html[data-theme="anime"] .sidebar,
+html[data-theme="anime"] .topbar {
+  background: rgba(255, 255, 255, 0.62) !important;
+}
+
+html[data-theme="guofeng"] .sidebar,
+html[data-theme="guofeng"] .topbar {
+  background: rgba(255, 252, 245, 0.65) !important;
+}
+
+html[data-theme="neon"] .sidebar,
+html[data-theme="neon"] .topbar,
+html[data-theme="neon"] .bottom-nav {
+  background: rgba(30, 41, 59, 0.72) !important;
+}
+
+html[data-theme="neon"] .composer-wrap {
+  background: linear-gradient(to top, rgba(30, 41, 59, 0.8) 0%, transparent 100%) !important;
+}
+
+html[data-theme="conan"] .sidebar {
+  background: rgba(255, 255, 255, 0.62) !important;
+}
+
+html[data-theme="conan"] .topbar {
+  background: rgba(255, 255, 255, 0.58) !important;
+}
+
+html[data-theme="conan"] .mockup-banner {
+  background: rgba(220, 230, 245, 0.55) !important;
+}
+
+.login-page {
+  background: transparent;
+}
+
+.login-brand {
+  background: linear-gradient(160deg, rgba(255, 228, 240, 0.72) 0%, rgba(237, 233, 254, 0.68) 45%, rgba(252, 231, 243, 0.7) 100%) !important;
+  backdrop-filter: blur(18px) saturate(1.1);
+}
+
+.login-form-panel {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+html[data-theme="anime"] .login-brand {
+  background: linear-gradient(160deg, rgba(237, 233, 254, 0.72) 0%, rgba(252, 231, 243, 0.68) 50%, rgba(219, 234, 254, 0.7) 100%) !important;
+}
+
+html[data-theme="guofeng"] .login-brand {
+  background: linear-gradient(160deg, rgba(255, 252, 245, 0.78) 0%, rgba(240, 235, 224, 0.74) 100%) !important;
+}
+
+html[data-theme="neon"] .login-brand {
+  background: linear-gradient(160deg, rgba(30, 41, 59, 0.82) 0%, rgba(15, 23, 42, 0.88) 100%) !important;
+}
+
+html[data-theme="neon"] .login-form-panel {
+  background: rgba(15, 23, 42, 0.35);
+}

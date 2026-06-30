@@ -1,0 +1,13 @@
+---
+description: crm 是 Git 提交同步 skill，不是客户关系管理系统；push 前联动 stack-changelog
+alwaysApply: true
+---
+
+# crm 命令
+
+当用户消息为 **crm**（单独一词）、**commit-rebase-merge**、**git-commit-rebase**、**提交并推送** 或 **commit and push** 时：
+
+1. **立即读取并执行** skill：`.cursor/skills/crm/SKILL.md`（或 `~/.cursor/skills/crm/SKILL.md`）
+2. **禁止**在代码库中搜索 CRM / 客户关系管理相关模块
+3. crm = **C**ommit **R**ebase **M**erge，是 Git 工作流，与业务 CRM 无关
+4. 阶段 4 **push 前**须执行 stack-changelog 门禁（见 crm SKILL「阶段 4-前置」）；不得用 `--no-verify` 绕过，除非用户明确要求

@@ -1,0 +1,3 @@
+#!/bin/sh
+# 技术栈变更未同步 DESIGN.md 时拒绝 push
+node scripts/check-stack-changelog.mjs

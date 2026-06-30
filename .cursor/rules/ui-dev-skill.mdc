@@ -1,0 +1,14 @@
+---
+description: ui-dev 按 UI-DESIGN-PLAN 与 mockups 推进 AI 工作台前端研发
+alwaysApply: true
+---
+
+# ui-dev 命令
+
+当用户消息为 **ui-dev**（单独一词）、**按文档研发**、**UI研发**、**继续研发**、**UI 设计计划开发**、**研发进度** 或 **ui-dev status** 时：
+
+1. **立即读取并执行** skill：`.cursor/skills/ui-dev/SKILL.md`（或 `~/.cursor/skills/ui-dev/SKILL.md`）
+2. 进度文件：`.cursor/skills/ui-dev/progress.md`
+3. 设计真相源：`docs/UI-DESIGN-PLAN.md` + `docs/mockups/`
+4. ui-dev **不自动 git commit/push**；用户说 **crm** 时再走 crm skill
+5. 修改 `package.json` 等栈文件后，push 前须 **stack-changelog** 门禁

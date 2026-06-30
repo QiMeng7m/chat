@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script>!function(){var t=localStorage.getItem('mascot-theme');if(t&&t!=='catdog')document.documentElement.setAttribute('data-theme',t)}();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#ff7eb3" />
+  <title>对话 — 喵汪 AI 工坊</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="app-layout has-bottom-nav">
+  <div class="mockup-banner">
+    <span class="sparkle">🌸</span> 多端适配 ·
+    <a href="index.html">首页</a> ·
+    <a href="chat-doc-form.html">文档生成</a>
+  </div>
+
+  <div class="drawer-overlay" data-drawer-close aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <button type="button" class="btn-icon drawer-close-btn" data-drawer-close aria-label="关闭菜单">✕</button>
+      <div class="sidebar-header">
+        <a href="index.html" class="sidebar-brand" style="text-decoration: none; color: inherit;">
+          <div class="logo-mascot" data-theme-logo>🐱</div>
+          <div>
+            <span data-theme-text="brandShort">喵汪 AI</span>
+            <span class="subtitle" data-theme-text="subtitle">AI 工坊</span>
+          </div>
+        </a>
+        <button class="btn btn-primary btn-block" style="margin-top: 16px;" type="button">✨ 新对话</button>
+      </div>
+
+      <div class="sidebar-body">
+        <div class="sidebar-section-title">📝 最近会话</div>
+        <a class="session-item active" href="#" data-drawer-close-on-click>
+          <span class="session-emoji">🛠</span>
+          <div>
+            <div class="title">Prisma 迁移报错怎么办</div>
+            <div class="meta">技术问答 · 今天 14:32</div>
+          </div>
+        </a>
+        <a class="session-item" href="#" data-drawer-close-on-click>
+          <span class="session-emoji">📄</span>
+          <div>
+            <div class="title">Q2 技术复盘文档</div>
+            <div class="meta">文档生成 · 昨天</div>
+          </div>
+        </a>
+        <a class="session-item" href="#" data-drawer-close-on-click>
+          <span class="session-emoji">✨</span>
+          <div>
+            <div class="title">帮润色一下这段文案</div>
+            <div class="meta">文本润色 · 6月16日</div>
+          </div>
+        </a>
+        <a class="session-item" href="#" data-drawer-close-on-click>
+          <span class="session-emoji">🐶</span>
+          <div>
+            <div class="title">随便聊聊</div>
+            <div class="meta">自由对话 · 6月15日</div>
+          </div>
+        </a>
+
+        <div class="sidebar-section-title" style="margin-top: 18px;">🎀 场景功能</div>
+        <div class="feature-grid">
+          <button type="button" class="feature-chip">
+            <span class="icon">💬</span>
+            <span class="name">自由闲聊</span>
+            <span class="desc">想聊啥聊啥</span>
+          </button>
+          <button type="button" class="feature-chip active">
+            <span class="icon">🛠</span>
+            <span class="name">技术问答</span>
+            <span class="desc">代码 debug</span>
+          </button>
+          <button type="button" class="feature-chip">
+            <span class="icon">📄</span>
+            <span class="name">文档生成</span>
+            <span class="desc">表单写稿</span>
+          </button>
+          <button type="button" class="feature-chip">
+            <span class="icon">✨</span>
+            <span class="name">文本润色</span>
+            <span class="desc">变更好看</span>
+          </button>
+          <button type="button" class="feature-chip">
+            <span class="icon">📋</span>
+            <span class="name">内容摘要</span>
+            <span class="desc">长文变短</span>
+          </button>
+          <button type="button" class="feature-chip">
+            <span class="icon">🖼</span>
+            <span class="name">图片分析</span>
+            <span class="desc">看懂截图</span>
+          </button>
+        </div>
+      </div>
+
+      <div style="padding: 14px; border-top: 2px dashed var(--border-soft);">
+        <a href="admin.html" style="display: flex; align-items: center; gap: 10px; padding: 10px; font-size: 13px; font-weight: 600; color: var(--text-secondary); text-decoration: none; border-radius: var(--radius);">
+          🐾 <span data-theme-text="sidebarAdminShort">铲屎官</span>后台
+        </a>
+        <a href="settings.html" style="display: flex; align-items: center; gap: 10px; padding: 10px; font-size: 13px; font-weight: 600; color: var(--text-secondary); text-decoration: none; border-radius: var(--radius); margin-top: 4px;">
+          ⚙️ 个人设置
+        </a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <!-- 平板/手机：横滑场景条 -->
+      <div class="feature-scroll" role="tablist" aria-label="场景功能">
+        <button type="button" class="feature-pill">💬 闲聊</button>
+        <button type="button" class="feature-pill active">🛠 技术</button>
+        <button type="button" class="feature-pill">📄 文档</button>
+        <button type="button" class="feature-pill">✨ 润色</button>
+        <button type="button" class="feature-pill">📋 摘要</button>
+        <button type="button" class="feature-pill">🖼 图片</button>
+      </div>
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="menu-btn" data-drawer-toggle aria-label="打开菜单">☰</button>
+          <span class="topbar-title">🛠 技术问答</span>
+          <span class="model-tag">code</span>
+        </div>
+        <div class="topbar-right topbar-compact">
+          <div class="model-select" title="切换模型">
+            <span class="dot"></span>
+            <span>DeepSeek</span>
+            <span class="model-tag">fast</span>
+            <span style="color: var(--text-muted);">▾</span>
+          </div>
+        </div>
+        <div class="topbar-right topbar-desktop-only">
+          <div class="model-select" title="切换模型">
+            <span class="dot"></span>
+            <span>DeepSeek Chat</span>
+            <span class="model-tag">fast</span>
+            <span style="color: var(--text-muted);">▾</span>
+          </div>
+          <span class="quota-badge">🐟 <span data-theme-text="quotaLabel">小鱼干</span> 87/100</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">admin@example.com</span>
+          <a href="settings.html" class="user-settings-link" aria-label="个人设置">⚙️</a>
+          <a href="login.html" class="btn btn-ghost btn-sm" style="text-decoration: none;">退出</a>
+        </div>
+      </header>
+
+      <div class="chat-area">
+        <article class="message user">
+          <div class="message-avatar" data-theme-user>🧑</div>
+          <div class="message-body">
+            <div class="message-header">你 · 14:30</div>
+            <div class="message-content">
+              运行 <code>npm run db:migrate</code> 时报错：<br><br>
+              <code>Error: P3009 migrate found failed migrations</code><br><br>
+              该怎么办呀？🥺
+            </div>
+          </div>
+        </article>
+
+        <article class="message assistant">
+          <div class="message-avatar" data-theme-assistant>🐱</div>
+          <div class="message-body">
+            <div class="message-header"><span data-theme-text="assistantLabel">猫猫助手</span> · DeepSeek · 14:30</div>
+            <div class="message-content">
+              <p><strong>喵～先别慌！</strong> P3009 表示有<strong>失败的迁移记录</strong>，需要先处理它再 migrate 哦 🐾</p>
+              <p><strong>推荐步骤：</strong></p>
+              <p>1️⃣ 看看是哪条迁移失败了：</p>
+<pre>cd server
+npx prisma migrate status</pre>
+              <p>2️⃣ 修复 SQL 后标记回滚再重跑：</p>
+<pre>npx prisma migrate resolve --rolled-back "20250618000000_xxx"
+npm run db:migrate</pre>
+              <p>3️⃣ 开发环境可以直接重置（会清空数据！）：</p>
+<pre>npx prisma migrate reset</pre>
+            </div>
+            <div class="message-actions">
+              <button type="button">📋 复制</button>
+              <button type="button">🔄 重新生成</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="message user">
+          <div class="message-avatar" data-theme-user>🧑</div>
+          <div class="message-body">
+            <div class="message-header">你 · 14:32</div>
+            <div class="message-content">
+              开发环境可以 reset～ reset 之后 seed 还在吗？
+            </div>
+          </div>
+        </article>
+
+        <article class="message assistant">
+          <div class="message-avatar" data-theme-assistant>🐱</div>
+          <div class="message-body">
+            <div class="message-header"><span data-theme-text="assistantLabel">猫猫助手</span> · DeepSeek · 14:32 <span class="typing-cursor">|</span></div>
+            <div class="message-content">
+              <p><code>migrate reset</code> 会重建数据库并<strong>自动跑 seed</strong>（如果配置了的话）✨</p>
+              <p>你也可以手动补种：</p>
+<pre>cd server
+npm run db:seed</pre>
+              <p>搞定之后请猫猫吃小鱼干～ 🐟</p>
+            </div>
+            <div class="message-actions">
+              <button type="button">📋 复制</button>
+              <button type="button">🔄 重新生成</button>
+              <button type="button" style="color: var(--danger); border-color: #fecdd3;">⏹ 停止</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="composer-wrap">
+        <div class="composer">
+          <div class="composer-toolbar">
+            <span>当前场景</span>
+            <span class="feature-badge">🛠 技术问答</span>
+            <span style="margin-left: auto;">Enter 发送 · Shift+Enter 换行</span>
+          </div>
+          <textarea class="composer-input" rows="2" data-theme-placeholder="composerPlaceholder" placeholder="输入问题喵～ 可以粘贴代码或报错信息 🐾"></textarea>
+          <div class="composer-footer">
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="btn-icon" title="上传图片">🖼</button>
+              <button type="button" class="btn-icon" title="切换场景">🎀</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span class="composer-hint">今日还剩 87 次喵</span>
+              <button type="button" class="btn btn-primary">发送 🐾</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" aria-label="主导航">
+    <div class="bottom-nav-inner">
+      <button type="button" class="bottom-nav-item" data-drawer-toggle>
+        <span class="bn-icon">💬</span>
+        <span>会话</span>
+      </button>
+      <a href="chat.html" class="bottom-nav-item active">
+        <span class="bn-icon">🐱</span>
+        <span>聊天</span>
+      </a>
+      <button type="button" class="bottom-nav-item" data-drawer-toggle>
+        <span class="bn-icon">🎀</span>
+        <span>场景</span>
+      </button>
+      <a href="settings.html" class="bottom-nav-item">
+        <span class="bn-icon">⚙️</span>
+        <span>设置</span>
+      </a>
+    </div>
+  </nav>
+
+  <script src="responsive.js"></script>
+  <script src="themes.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script>!function(){var t=localStorage.getItem('mascot-theme');if(t&&t!=='catdog')document.documentElement.setAttribute('data-theme',t)}();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff7eb3" />
+  <title>喵汪 AI 工坊 — 首页</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="mockup-banner">
+    <span class="sparkle">✨</span> 多端适配 ·
+    <a href="chat.html">对话</a>
+  </div>
+
+  <div class="nav-overlay" data-nav-overlay aria-hidden="true"></div>
+  <nav class="mobile-nav-panel" aria-label="移动端菜单">
+    <div style="margin-bottom: 20px; font-weight: 800; font-size: 18px;"><span data-theme-logo>🐱</span> <span data-theme-text="brandShort">喵汪 AI</span></div>
+    <a href="index.html">首页</a>
+    <a href="chat.html">开始聊天</a>
+    <a href="admin.html">管理后台</a>
+    <a href="settings.html">个人设置</a>
+    <a href="login.html">登录</a>
+  </nav>
+
+  <header class="topbar" style="position: sticky; top: 0; z-index: 10;">
+    <div class="topbar-left">
+      <div class="sidebar-brand">
+        <div class="logo-mascot" data-theme-logo>🐱</div>
+        <div>
+          <span data-theme-text="brand">喵汪 AI 工坊</span>
+          <span class="subtitle" data-theme-text="tagline">毛茸茸的智能小助手</span>
+        </div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="chat.html">开始聊天</a>
+      <a href="admin.html">管理后台</a>
+      <a href="settings.html">设置</a>
+      <a href="login.html">登录</a>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="settings.html" class="user-settings-link" aria-label="个人设置">⚙️</a>
+      <button type="button" class="nav-toggle" data-nav-toggle aria-label="打开菜单">☰</button>
+    </div>
+  </header>
+
+  <section class="landing-hero">
+    <div class="hero-mascots">
+      <span data-theme-logo>🐱</span>
+      <span data-theme-text="indexHeroEmoji">🌸</span>
+      <span data-theme-logo-alt>🐶</span>
+    </div>
+    <h1 data-theme-text="indexHero">和猫猫狗狗一起用 AI</h1>
+    <p class="lead" data-theme-text="indexLead">手机、iPad、电脑都能聊～ 模型由铲屎官配置，小伙伴开箱即用喵</p>
+    <div class="landing-cta">
+      <a class="btn btn-primary" href="chat.html" style="text-decoration: none;">🐾 开始对话</a>
+      <a class="btn btn-secondary" href="login.html" style="text-decoration: none;">💫 成员登录</a>
+    </div>
+  </section>
+
+  <section class="landing-grid">
+    <article class="landing-card">
+      <div class="card-icon">💬</div>
+      <h3>自由闲聊</h3>
+      <p>像和闺蜜聊天一样自然，流式输出、Markdown 美美哒～</p>
+    </article>
+    <article class="landing-card">
+      <div class="card-icon">🛠</div>
+      <h3>技术问答</h3>
+      <p>代码报错不怕啦，助手帮你一步步排查修 bug！</p>
+    </article>
+    <article class="landing-card">
+      <div class="card-icon">📄</div>
+      <h3>文档生成</h3>
+      <p>填填小表单，结构化 Markdown 文稿自动生成 ✨</p>
+    </article>
+    <article class="landing-card">
+      <div class="card-icon">🖼</div>
+      <h3>图片分析</h3>
+      <p>上传截图或照片，Vision 模型帮你看懂内容～</p>
+    </article>
+    <article class="landing-card">
+      <div class="card-icon">✨</div>
+      <h3>场景小功能</h3>
+      <p>润色、摘要等 Feature 卡片，点一下就能切换场景！</p>
+    </article>
+    <article class="landing-card">
+      <div class="card-icon">🎨</div>
+      <h3>五套主题皮肤</h3>
+      <p>猫狗、二次元、国风、轻霓虹、柯南——在「个人设置」里随心切换～</p>
+    </article>
+  </section>
+
+  <footer class="site-footer">
+    原型 v1.3 · 五套主题 ·
+    <a href="../PRD-FEATURES.md">需求分解</a> ·
+    <a href="../API-PROTOCOL.md">接口协议</a>
+  </footer>
+
+  <script src="responsive.js"></script>
+  <script src="themes.js"></script>
+</body>
+</html>

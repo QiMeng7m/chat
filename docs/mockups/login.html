@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script>!function(){var t=localStorage.getItem('mascot-theme');if(t&&t!=='catdog')document.documentElement.setAttribute('data-theme',t)}();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff7eb3" />
+  <title>登录 — 喵汪 AI 工坊</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="login-page">
+    <span class="login-deco login-deco--1 theme-only-catdog" aria-hidden="true">🐾</span>
+    <span class="login-deco login-deco--2 theme-only-catdog" aria-hidden="true">🌸</span>
+    <span class="login-deco login-deco--3" aria-hidden="true">✨</span>
+    <span class="login-deco login-deco--4 theme-only-catdog" aria-hidden="true">🐱</span>
+    <span class="login-deco login-deco--5 theme-only-catdog" aria-hidden="true">💕</span>
+    <span class="login-deco login-deco--1 theme-only-anime" hidden aria-hidden="true">🌸</span>
+    <span class="login-deco login-deco--4 theme-only-anime" hidden aria-hidden="true">⭐</span>
+    <span class="login-deco login-deco--1 theme-only-guofeng" hidden aria-hidden="true">🏮</span>
+    <span class="login-deco login-deco--4 theme-only-guofeng" hidden aria-hidden="true">📜</span>
+    <span class="login-deco login-deco--1 theme-only-neon" hidden aria-hidden="true">💠</span>
+    <span class="login-deco login-deco--1 theme-only-conan" hidden aria-hidden="true">🔍</span>
+    <span class="login-deco login-deco--4 theme-only-conan" hidden aria-hidden="true">👓</span>
+
+    <a href="index.html" class="login-back" aria-label="返回首页">
+      <span>←</span><span>首页</span>
+    </a>
+    <a href="settings.html" class="login-settings-link" aria-label="个人设置">⚙️ 外观</a>
+    <span class="login-prototype-tag">UI 原型 · 登录</span>
+
+    <div class="login-shell">
+      <aside class="login-brand" aria-hidden="true">
+        <div class="login-brand-inner">
+          <div class="login-brand-logo">
+            <div class="logo-mascot" data-theme-logo>🐱</div>
+            <div class="login-brand-logo-text">
+              <strong data-theme-text="brand">喵汪 AI 工坊</strong>
+              <span data-theme-text="tagline">毛茸茸的智能小助手</span>
+            </div>
+          </div>
+
+          <div class="login-mascot-row">
+            <span class="login-mascot" data-theme-logo>🐱</span>
+            <span class="login-mascot" data-theme-logo-alt>🐶</span>
+          </div>
+
+          <h2 data-theme-text="loginHero" data-theme-html="true">和小伙伴一起<br />愉快地使用 AI 喵～</h2>
+          <p data-theme-text="loginHeroDesc">聊天、写文档、问技术、看图片——管理员配置好模型，你登录就能用。</p>
+
+          <div class="login-features">
+            <span class="login-feature-tag">💬 自由对话</span>
+            <span class="login-feature-tag">🛠 技术问答</span>
+            <span class="login-feature-tag">📄 文档生成</span>
+            <span class="login-feature-tag">🖼 图片分析</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="login-form-panel">
+        <div class="login-card">
+          <div class="login-card-body">
+            <div class="login-card-mobile-header">
+              <div class="mini-mascots"><span data-theme-logo>🐱</span> <span data-theme-logo-alt>🐶</span></div>
+              <div class="login-brand-logo" style="justify-content: center; margin-bottom: 0;">
+                <div class="logo-mascot" data-theme-logo style="width: 48px; height: 48px; font-size: 24px;">🐱</div>
+              </div>
+            </div>
+
+            <h1 data-theme-text="loginTitle">欢迎回来喵～</h1>
+            <p class="subtitle" data-theme-text="loginSubtitle">用管理员分配的账号登录，开始和 AI 玩耍吧</p>
+
+            <form action="chat.html" method="get" id="login-form">
+              <div class="input-group">
+                <label class="label" for="email">邮箱</label>
+                <div class="input-wrap">
+                  <span class="input-icon" aria-hidden="true">📧</span>
+                  <input class="input" type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required value="admin@example.com" />
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label class="label" for="password">密码</label>
+                <div class="input-wrap has-toggle">
+                  <span class="input-icon" aria-hidden="true">🔑</span>
+                  <input class="input" type="password" id="password" name="password" placeholder="输入密码" autocomplete="current-password" required />
+                  <button type="button" class="input-toggle" id="pwd-toggle" aria-label="显示密码">👁</button>
+                </div>
+              </div>
+
+              <div class="login-options">
+                <label class="login-remember">
+                  <input type="checkbox" name="remember" checked />
+                  <span data-theme-text="remember">记住我 🐾</span>
+                </label>
+                <a href="#" class="login-forgot" onclick="return false;">忘记密码？</a>
+              </div>
+
+              <button type="submit" class="btn btn-primary login-submit" data-theme-text="loginSubmit">🐾 登录</button>
+            </form>
+
+            <div class="login-footer">
+              <p>
+                <span class="hint-icon" data-theme-text="loginHintIcon">🌸</span>
+                <span data-theme-text="footerHint">注册已关闭，请联系铲屎官管理员开通账号</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('pwd-toggle')?.addEventListener('click', function () {
+      const pwd = document.getElementById('password');
+      if (!pwd) return;
+      const show = pwd.type === 'password';
+      pwd.type = show ? 'text' : 'password';
+      this.textContent = show ? '🙈' : '👁';
+      this.setAttribute('aria-label', show ? '隐藏密码' : '显示密码');
+    });
+  </script>
+  <script src="themes.js"></script>
+</body>
+</html>

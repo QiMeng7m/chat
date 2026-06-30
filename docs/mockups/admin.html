@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script>!function(){var t=localStorage.getItem('mascot-theme');if(t&&t!=='catdog')document.documentElement.setAttribute('data-theme',t)}();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#a78bfa" />
+  <title>管理后台 — 喵汪 AI 工坊</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="app-layout">
+  <div class="mockup-banner">
+    铲屎官专用 🐾 · 多端适配 · <a href="chat.html">对话页</a>
+  </div>
+
+  <div class="drawer-overlay" data-drawer-close aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <button type="button" class="btn-icon drawer-close-btn" data-drawer-close aria-label="关闭菜单">✕</button>
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="logo-mascot dog" data-theme-logo>🐶</div>
+          <div>
+            管理后台
+            <span class="subtitle"><span data-theme-text="adminConsole">铲屎官控制台</span></span>
+          </div>
+        </div>
+      </div>
+      <nav class="sidebar-body">
+        <a class="admin-nav-item active" href="#overview">📊 概览</a>
+        <a class="admin-nav-item" href="#providers">🔌 Provider</a>
+        <a class="admin-nav-item" href="#models">🤖 模型</a>
+        <a class="admin-nav-item" href="#features">🎀 Feature</a>
+        <a class="admin-nav-item" href="#users">👥 <span data-theme-text="usersLabel">小伙伴</span></a>
+        <a class="admin-nav-item" href="settings.html">⚙️ 个人设置</a>
+      </nav>
+      <div style="padding: 14px; border-top: 2px dashed var(--border-soft);">
+        <a href="chat.html" style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">← 返回聊天</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="menu-btn" data-drawer-toggle aria-label="打开菜单">☰</button>
+          <span class="topbar-title" style="font-weight: 800;">📊 管理后台</span>
+        </div>
+        <div class="topbar-right">
+          <span style="font-size: 13px; font-weight: 700; color: var(--secondary);">🐾 admin · <span data-theme-text="adminRole">铲屎官</span></span>
+          <a href="settings.html" class="user-settings-link" aria-label="个人设置">⚙️</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <section id="overview">
+          <div class="page-header">
+            <h1>🌸 今日概览</h1>
+            <p>2026-06-18 · 看看小伙伴们今天聊了多少喵～</p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card" data-emoji="💬">
+              <div class="value">128</div>
+              <div class="label">今日请求</div>
+            </div>
+            <div class="stat-card" data-emoji="🐱">
+              <div class="value">12</div>
+              <div class="label">活跃用户</div>
+            </div>
+            <div class="stat-card" data-emoji="🤖">
+              <div class="value">3</div>
+              <div class="label">已启用模型</div>
+            </div>
+            <div class="stat-card" data-emoji="😿">
+              <div class="value" style="color: var(--warning);">3</div>
+              <div class="label">今日错误</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="providers" style="margin-top: 44px;">
+          <div class="page-header page-header-row">
+            <div>
+              <h1>🔌 Provider 管理</h1>
+              <p>添加 API 密钥，密钥只存在服务器里 🔐</p>
+            </div>
+            <button type="button" class="btn btn-primary">+ 添加 Provider</button>
+          </div>
+
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>Base URL</th>
+                    <th>密钥</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>DeepSeek</strong></td>
+                    <td>openai-compat</td>
+                    <td style="font-family: var(--mono); font-size: 12px;">api.deepseek.com/v1</td>
+                    <td><code>sk-****abcd</code></td>
+                    <td><span class="badge badge-success">启用</span></td>
+                    <td>
+                      <button type="button" class="btn btn-ghost btn-sm">测试</button>
+                      <button type="button" class="btn btn-ghost btn-sm">编辑</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>通义千问</strong></td>
+                    <td>openai-compat</td>
+                    <td style="font-family: var(--mono); font-size: 12px;">dashscope.../v1</td>
+                    <td><code>sk-****ef12</code></td>
+                    <td><span class="badge badge-success">启用</span></td>
+                    <td>
+                      <button type="button" class="btn btn-ghost btn-sm">测试</button>
+                      <button type="button" class="btn btn-ghost btn-sm">编辑</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Ollama 本地</strong></td>
+                    <td>openai-compat</td>
+                    <td style="font-family: var(--mono); font-size: 12px;">localhost:11434/v1</td>
+                    <td><code>—</code></td>
+                    <td><span class="badge badge-muted">禁用</span></td>
+                    <td>
+                      <button type="button" class="btn btn-ghost btn-sm">测试</button>
+                      <button type="button" class="btn btn-ghost btn-sm">编辑</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 22px;">
+            <div class="card-cute-header">
+              <span style="font-size: 28px;">➕</span>
+              <strong>添加 Provider</strong>
+            </div>
+            <div class="card-body">
+              <div class="form-grid-2">
+                <div class="form-group" style="margin: 0;">
+                  <label class="label">显示名称</label>
+                  <input class="input" type="text" style="width: 100%;" placeholder="DeepSeek" />
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="label">类型</label>
+                  <select class="select" style="width: 100%;"><option>openai-compat</option></select>
+                </div>
+                <div class="form-group" style="margin: 0; grid-column: 1 / -1;">
+                  <label class="label">Base URL</label>
+                  <input class="input" type="url" style="width: 100%;" placeholder="https://api.deepseek.com/v1" />
+                </div>
+                <div class="form-group" style="margin: 0; grid-column: 1 / -1;">
+                  <label class="label">API Key 🔑</label>
+                  <input class="input" type="password" style="width: 100%;" placeholder="sk-..." />
+                </div>
+              </div>
+              <div style="margin-top: 18px; display: flex; gap: 10px;">
+                <button type="button" class="btn btn-primary">💾 保存</button>
+                <button type="button" class="btn btn-ghost">🔍 测试连接</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="models" style="margin-top: 44px;">
+          <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h1>🤖 模型管理</h1>
+              <p>添加 modelId，打上 cute 标签～</p>
+            </div>
+            <button type="button" class="btn btn-primary">+ 添加模型</button>
+          </div>
+
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>展示名</th>
+                    <th>Model ID</th>
+                    <th>Provider</th>
+                    <th>标签</th>
+                    <th>Vision</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>DeepSeek Chat</strong> <span class="badge badge-primary">推荐</span></td>
+                    <td><code>deepseek-chat</code></td>
+                    <td>DeepSeek</td>
+                    <td><span class="model-tag">fast</span> <span class="model-tag">code</span></td>
+                    <td>否</td>
+                    <td><span class="badge badge-success">启用</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Qwen-VL</strong></td>
+                    <td><code>qwen-vl-max</code></td>
+                    <td>通义千问</td>
+                    <td><span class="model-tag">vision</span></td>
+                    <td>是 🖼</td>
+                    <td><span class="badge badge-success">启用</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="features" style="margin-top: 44px;">
+          <div class="page-header">
+            <h1>🎀 Feature 管理</h1>
+            <p>编辑场景 Prompt，小伙伴们就能用啦</p>
+          </div>
+
+          <div class="card">
+            <div class="card-cute-header">
+              <span style="font-size: 28px;">🛠</span>
+              <strong>编辑：技术问答</strong>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="label">System Prompt</label>
+                <textarea class="textarea" style="width: 100%; font-family: var(--mono); font-size: 13px;" rows="4">你是资深全栈工程师（也是一只聪明的猫猫🐱）。回答技术问题时：先简要结论，再分步骤说明；涉及代码时使用对应语言代码块。</textarea>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+                <div class="form-group" style="margin: 0;">
+                  <label class="label">默认模型</label>
+                  <select class="select" style="width: 100%;"><option>DeepSeek Chat</option></select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="label">模型策略</label>
+                  <select class="select" style="width: 100%;"><option>recommended</option></select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="label">Temperature</label>
+                  <input class="input" type="number" style="width: 100%;" value="0.7" step="0.1" />
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" style="margin-top: 18px;">💾 保存</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="users" style="margin-top: 44px; margin-bottom: 48px;">
+          <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h1>👥 小伙伴管理</h1>
+              <p>创建账号、调整每日小鱼干（请求）限额</p>
+            </div>
+            <button type="button" class="btn btn-secondary">+ 创建用户</button>
+          </div>
+
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>邮箱</th>
+                    <th>角色</th>
+                    <th>日限额 🐟</th>
+                    <th>今日已用</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>admin@example.com</td>
+                    <td><span class="badge badge-primary">铲屎官</span></td>
+                    <td>∞</td>
+                    <td>15</td>
+                    <td><span class="badge badge-success">正常</span></td>
+                  </tr>
+                  <tr>
+                    <td>zhang@company.com</td>
+                    <td><span class="badge badge-muted">user</span></td>
+                    <td>100</td>
+                    <td>42</td>
+                    <td><span class="badge badge-success">正常</span></td>
+                  </tr>
+                  <tr>
+                    <td>li@company.com</td>
+                    <td><span class="badge badge-muted">user</span></td>
+                    <td>100</td>
+                    <td>100</td>
+                    <td><span class="badge badge-muted">小鱼干用完啦</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <script src="responsive.js"></script>
+  <script src="themes.js"></script>
+</body>
+</html>

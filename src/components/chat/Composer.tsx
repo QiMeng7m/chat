@@ -6,7 +6,7 @@ import { useChat } from './ChatContext'
 
 export default function Composer() {
   const { meta } = useTheme()
-  const { quotaRemaining } = useAuth()
+  const { quotaRemaining, quotaTotal } = useAuth()
   const {
     streaming,
     sendMessage,
@@ -128,7 +128,7 @@ export default function Composer() {
           </div>
           <div className="composer-footer-right">
             <span className="composer-hint">
-              今日还剩 {quotaRemaining} 次{meta.quotaLabel === '小鱼干' ? '喵' : ''}
+              剩余 {quotaRemaining}/{quotaTotal} 次{meta.quotaLabel === '小鱼干' ? '喵' : ''}
             </span>
             {streaming ? (
               <Button danger onClick={stopGeneration}>

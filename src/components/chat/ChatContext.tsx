@@ -13,24 +13,37 @@ import { streamChat, uploadChatFile } from '../../api/chat'
 import { getFeatures } from '../../api/features'
 import { ApiError } from '../../api/http'
 import { getModels } from '../../api/models'
+import { getOwnerProfile } from '../../api/ownerProfile'
 import {
   createSession as apiCreateSession,
   getSession as apiGetSession,
   listSessions as apiListSessions,
 } from '../../api/sessions'
-import type { Attachment, FeaturePublic, ModelPublic } from '../../api/types'
+import type { Attachment, FeaturePublic, ModelPublic, UserPublic } from '../../api/types'
 import { useAuth } from '../../context/AuthContext'
 import {
   loadLocalSessions,
+  mergeSessions,
   saveLocalSessions,
   sessionTitleFromMessage,
   type StoredSession,
 } from '../../lib/localSessions'
+import {
+  answerOwnerQuery,
+  createGreetingMessage,
+  createLocalAssistantMessage,
+  getDefaultOwnerProfile,
+  isOwnerRelatedQuery,
+} from '../../lib/ownerProfile'
+import {
+  enrichModelsForDisplay,
+  isModelAccessible,
+  pickAccessibleDefaultModel,
+} from '../../lib/modelAccess'
 import type { ChatMessage, SessionSummary } from '../../types/chat'
 
-function pickDefaultModel(models: ModelPublic[]): string | null {
-  if (!models.length) return null
-  return models.find((m) => m.recommended)?.id ?? models[0]!.id
+function pickDefaultModel(models: ModelPublic[], user: UserPublic | null): string | null {
+  return pickAccessibleDefaultModel(models, user)
 }
 
 function pickDefaultFeature(features: FeaturePublic[]): string | null {
@@ -124,6 +137,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const abortRef = useRef<AbortController | null>(null)
   const storedRef = useRef(storedSessions)
   storedRef.current = storedSessions
+  const currentSessionIdRef = useRef<string | null>(null)
+
+  const setActiveSessionId = useCallback((id: string | null) => {
+    currentSessionIdRef.current = id
+    setCurrentSessionId(id)
+  }, [])
 
   const persistLocal = useCallback(
     (sessions: StoredSession[]) => {
@@ -134,31 +153,56 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   )
 
   const upsertCurrentSession = useCallback(
-    (nextMessages: ChatMessage[], title?: string) => {
-      if (!currentSessionId) return
+    (nextMessages: ChatMessage[], title?: string, sessionId?: string) => {
+      const id = sessionId ?? currentSessionIdRef.current
+      if (!id) return
       const now = Date.now()
-      const existing = storedRef.current.find((s) => s.id === currentSessionId)
+      const existing = storedRef.current.find((s) => s.id === id)
+      const resolvedTitle =
+        existing?.title && existing.title !== '新对话'
+          ? existing.title
+          : (title ?? existing?.title ?? '新对话')
       const updated: StoredSession = {
-        id: currentSessionId,
-        title: title ?? existing?.title ?? '新对话',
+        id,
+        title: resolvedTitle,
         featureId,
         modelId,
         messages: nextMessages.filter((m) => !m.streaming),
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
       }
-      const rest = storedRef.current.filter((s) => s.id !== currentSessionId)
+      const rest = storedRef.current.filter((s) => s.id !== id)
       persistLocal([updated, ...rest])
     },
-    [currentSessionId, featureId, modelId, persistLocal],
+    [featureId, modelId, persistLocal],
   )
+
+  const ensureActiveSession = useCallback((): string => {
+    const existing = currentSessionIdRef.current
+    if (existing) return existing
+
+    const id = createId()
+    setActiveSessionId(id)
+    const now = Date.now()
+    const initial: StoredSession = {
+      id,
+      title: '新对话',
+      featureId,
+      modelId,
+      messages: [],
+      createdAt: now,
+      updatedAt: now,
+    }
+    persistLocal([initial, ...storedRef.current])
+    return id
+  }, [featureId, modelId, persistLocal, setActiveSessionId])
 
   useEffect(() => {
     void (async () => {
       setCatalogLoading(true)
       try {
         const [modelList, featureList] = await Promise.all([getModels(), getFeatures()])
-        setModels(modelList)
+        setModels(enrichModelsForDisplay(modelList))
         setFeatures(featureList)
         if (!modelList.length) {
           message.warning('暂无可用模型，请联系管理员配置 Provider 与模型')
@@ -171,18 +215,19 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setCatalogLoading(false)
       }
     })()
-  }, [])
+  }, [user?.id, user?.proAccess, user?.role])
 
   useEffect(() => {
     if (!models.length) {
       setModelIdState('')
       return
     }
-    if (!models.some((m) => m.id === modelId)) {
-      const next = pickDefaultModel(models)
+    const current = models.find((m) => m.id === modelId)
+    if (!current || !isModelAccessible(current, user)) {
+      const next = pickDefaultModel(models, user)
       if (next) setModelIdState(next)
     }
-  }, [models, modelId])
+  }, [models, modelId, user])
 
   useEffect(() => {
     if (!features.length) {
@@ -196,22 +241,28 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [features, featureId])
 
   useEffect(() => {
+    const cached = loadLocalSessions(userId)
+    if (cached.length) {
+      setStoredSessions(cached)
+    }
+
     void (async () => {
       try {
         const res = await apiListSessions({ pageSize: 50 })
         const mapped: StoredSession[] = res.items.map((s) => ({
           id: s.id,
           title: s.title,
-          featureId: s.featureId ?? featureId,
-          modelId: s.defaultModelId ?? modelId,
+          featureId: s.featureId ?? '',
+          modelId: s.defaultModelId ?? '',
           messages: [],
           createdAt: new Date(s.createdAt).getTime(),
           updatedAt: new Date(s.updatedAt).getTime(),
         }))
-        persistLocal(mapped)
+        const base = storedRef.current.length ? storedRef.current : cached
+        persistLocal(mergeSessions(base, mapped))
       } catch {
-        const cached = loadLocalSessions(userId).filter((s) => !isLocalSessionId(s.id))
-        persistLocal(cached)
+        const fallback = loadLocalSessions(userId)
+        if (fallback.length) persistLocal(fallback)
       }
     })()
   }, [userId, persistLocal])
@@ -239,7 +290,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setFeatureIdState(id)
       const feature = features.find((f) => f.id === id)
       if (feature?.defaultModelId) {
-        setModelIdState(feature.defaultModelId)
+        const defaultModel = models.find((m) => m.id === feature.defaultModelId)
+        if (defaultModel && isModelAccessible(defaultModel, user)) {
+          setModelIdState(feature.defaultModelId)
+        }
       }
       if (currentSessionId) {
         const rest = storedRef.current.map((s) =>
@@ -248,14 +302,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         persistLocal(rest)
       }
     },
-    [features, currentSessionId, persistLocal],
+    [features, currentSessionId, persistLocal, models, user],
   )
 
   const setModelId = useCallback(
     (id: string) => {
       if (modelLocked) return
       const nextModel = models.find((m) => m.id === id)
-      if (!nextModel?.supportsVision) {
+      if (!nextModel || !isModelAccessible(nextModel, user)) return
+      if (!nextModel.supportsVision) {
         setAttachments([])
       }
       setModelIdState(id)
@@ -266,22 +321,28 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         persistLocal(rest)
       }
     },
-    [modelLocked, models, currentSessionId, persistLocal],
+    [modelLocked, models, currentSessionId, persistLocal, user],
   )
 
   const newSession = useCallback(() => {
     abortRef.current?.abort()
     setStreaming(false)
-    setMessages([])
+    setMessages([createGreetingMessage()])
     setAttachments([])
-    setCurrentSessionId(null)
-  }, [])
+    setActiveSessionId(null)
+  }, [setActiveSessionId])
+
+  useEffect(() => {
+    if (currentSessionId === null && messages.length === 0 && !catalogLoading) {
+      setMessages([createGreetingMessage()])
+    }
+  }, [catalogLoading, currentSessionId, messages.length])
 
   const selectSession = useCallback(
     async (id: string) => {
       abortRef.current?.abort()
       setStreaming(false)
-      setCurrentSessionId(id)
+      setActiveSessionId(id)
       setAttachments([])
 
       const local = storedRef.current.find((s) => s.id === id)
@@ -296,7 +357,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         try {
           const detail = await apiGetSession(id)
           setFeatureIdState(detail.featureId ?? pickDefaultFeature(features) ?? '')
-          setModelIdState(detail.defaultModelId ?? pickDefaultModel(models) ?? '')
+          setModelIdState(detail.defaultModelId ?? pickDefaultModel(models, user) ?? '')
           const loaded: ChatMessage[] = detail.messages
             .filter((m) => m.role === 'user' || m.role === 'assistant')
             .map((m) => ({
@@ -324,7 +385,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setMessages(local.messages)
       }
     },
-    [features, models, persistLocal],
+    [features, models, persistLocal, setActiveSessionId],
   )
 
   const stopGeneration = useCallback(() => {
@@ -364,8 +425,47 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       const hasAttachments = attachments.length > 0
       if ((!trimmed && !hasForm && !hasAttachments) || streaming) return
 
+      const displayText =
+        trimmed ||
+        (hasAttachments ? '请分析这张图片' : '') ||
+        (formData
+          ? Object.entries(formData)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join('\n')
+          : '')
+
+      if (isOwnerRelatedQuery(trimmed, messages)) {
+        const activeSessionId = ensureActiveSession()
+        const userMessage: ChatMessage = {
+          id: createId(),
+          role: 'user',
+          content: displayText,
+          createdAt: Date.now(),
+        }
+        let profile = getDefaultOwnerProfile()
+        try {
+          profile = await getOwnerProfile()
+        } catch {
+          message.warning('无法从服务器加载主人资料，使用默认内容回答')
+        }
+        const assistantMessage = createLocalAssistantMessage(answerOwnerQuery(trimmed, profile))
+        const nextMessages = [...messages, userMessage, assistantMessage]
+        setMessages(nextMessages)
+        upsertCurrentSession(
+          nextMessages,
+          sessionTitleFromMessage(displayText),
+          activeSessionId,
+        )
+        return
+      }
+
       if (!models.length || !modelId || !models.some((m) => m.id === modelId)) {
         message.error('暂无可用模型，无法发送消息')
+        return
+      }
+      const activeModel = models.find((m) => m.id === modelId)
+      if (!activeModel || !isModelAccessible(activeModel, user)) {
+        message.warning('当前模型无使用权限，请联系管理员开通 DeepSeek V4 Pro')
         return
       }
       if (!featureId) {
@@ -379,13 +479,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
 
       if (quotaRemaining <= 0) {
-        setQuotaError('今日配额已用完，请明天再来或联系管理员～')
-        message.error('今日配额已用完')
+        setQuotaError('配额已用完，请联系管理员开通更多额度～')
+        message.error('配额已用完，请联系管理员')
         return
       }
 
-      let sessionId = currentSessionId
-      const needsServerSession = !sessionId || isLocalSessionId(sessionId)
+      let sessionId = currentSessionIdRef.current ?? ensureActiveSession()
+      const needsServerSession = isLocalSessionId(sessionId)
       if (needsServerSession) {
         const previousLocalId = sessionId
         try {
@@ -395,20 +495,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             defaultModelId: modelId,
           })
           sessionId = created.id
-          setCurrentSessionId(sessionId)
+          setActiveSessionId(sessionId)
         } catch {
-          sessionId = null
-          setCurrentSessionId(null)
+          // 保留本地会话，仍可继续聊天
         }
-        if (sessionId) {
+        if (!isLocalSessionId(sessionId)) {
           const now = Date.now()
+          const draft = storedRef.current.find((s) => s.id === previousLocalId)
           const initial: StoredSession = {
             id: sessionId,
-            title: '新对话',
+            title: draft?.title ?? '新对话',
             featureId,
             modelId,
-            messages: [],
-            createdAt: now,
+            messages: draft?.messages ?? [],
+            createdAt: draft?.createdAt ?? now,
             updatedAt: now,
           }
           const rest = storedRef.current.filter(
@@ -417,15 +517,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           persistLocal([initial, ...rest])
         }
       }
-
-      const displayText =
-        trimmed ||
-        (hasAttachments ? '请分析这张图片' : '') ||
-        (formData
-          ? Object.entries(formData)
-              .map(([k, v]) => `${k}: ${v}`)
-              .join('\n')
-          : '')
 
       const userMessage: ChatMessage = {
         id: createId(),
@@ -481,20 +572,30 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
 
       const syncServerSessionId = (serverId: string) => {
+        const previousId = currentSessionIdRef.current
+        if (previousId && !isLocalSessionId(previousId) && previousId !== serverId) {
+          return
+        }
         sessionId = serverId
-        setCurrentSessionId(serverId)
+        setActiveSessionId(serverId)
         const now = Date.now()
         const existing = storedRef.current.find((s) => s.id === serverId)
+        const draft =
+          previousId && isLocalSessionId(previousId)
+            ? storedRef.current.find((s) => s.id === previousId)
+            : undefined
         const updated: StoredSession = {
           id: serverId,
-          title: title ?? existing?.title ?? '新对话',
+          title: title ?? existing?.title ?? draft?.title ?? '新对话',
           featureId,
           modelId,
-          messages: existing?.messages ?? [],
-          createdAt: existing?.createdAt ?? now,
+          messages: (existing?.messages?.length ? existing.messages : draft?.messages) ?? [],
+          createdAt: existing?.createdAt ?? draft?.createdAt ?? now,
           updatedAt: now,
         }
-        const rest = storedRef.current.filter((s) => s.id !== serverId && !isLocalSessionId(s.id))
+        const rest = storedRef.current.filter(
+          (s) => s.id !== serverId && s.id !== previousId,
+        )
         persistLocal([updated, ...rest])
       }
 
@@ -528,7 +629,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         if (controller.signal.aborted) return
         if (err instanceof ApiError && err.status === 429) {
-          setQuotaError(err.message || '今日请求次数已达上限')
+          setQuotaError(err.message || '请求次数已达上限，请联系管理员')
           message.error('配额不足：' + (err.message || '429'))
           setQuotaRemaining(0)
         } else {
@@ -567,18 +668,19 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       attachments,
       messages,
       supportsVision,
+      user,
       setQuotaRemaining,
       persistLocal,
       upsertCurrentSession,
+      ensureActiveSession,
+      setActiveSessionId,
     ],
   )
 
-  const modelsEmpty = models.length === 0
+  const modelsEmpty = models.filter((m) => isModelAccessible(m, user)).length === 0
   const canChat =
     !catalogLoading &&
-    models.length > 0 &&
-    Boolean(modelId) &&
-    models.some((m) => m.id === modelId) &&
+    models.some((m) => m.id === modelId && isModelAccessible(m, user)) &&
     Boolean(featureId)
 
   const value = useMemo(
@@ -635,6 +737,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       clearQuotaError,
       currentFeature,
       currentModel,
+      user,
       supportsVision,
       modelLocked,
     ],

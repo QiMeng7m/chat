@@ -1,5 +1,5 @@
 /**
- * 喵汪 AI 工坊 — 多端 UI 交互（抽屉 / 底部导航 / 安全区）
+ * 柒梦的小破站 — 多端 UI 交互（抽屉 / 底部导航 / 安全区）
  */
 (function () {
   const DRAWER_OPEN = 'drawer-open'

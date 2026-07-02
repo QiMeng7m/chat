@@ -14,7 +14,7 @@
 
 ### 1.1 愿景
 
-打造一个**属于自己的作品**：个人网站 + 可扩展的自定义 AI 对话能力，面向**小体量用户**（约 10～200 人）可持续运行。
+打造一个**属于自己的作品**「柒梦的小破站」：个人网站 + 可扩展的自定义 AI 对话能力，面向**小体量用户**（约 10～200 人）可持续运行。
 
 ### 1.2 核心原则
 
@@ -394,6 +394,8 @@ interface ProviderConfig {
 | v0.2.0 | 2026-06-18 | 接入 SQLite + Prisma 6；Post 模型与迁移；seed 示例文章；posts 改读库；新增 GET /api/posts/:id | server/、docs/ | — |
 | v0.2.1 | 2026-06-18 | Provider 新增 `protocol` 字段与 Anthropic 流式适配层；seed 写入 JZ Internal one-api 模型列表；理由：对接公司网关与 claude-jz.ps1 同源配置，一套 adapter 支持双协议且前端可切换模型 | server/prisma/、server/src/providers/、client/ChatContext、docs/ | — |
 | v0.2.2 | 2026-06-18 | 接入 multer 图片上传与 vision 多模态对话；理由：对话需支持截图/图片分析，服务端统一存储并转 base64 转发上游，避免前端直连模型 | server/、client/、docs/ | — |
+| v0.3.0 | 2026-07-02 | 品牌重塑为「柒梦的小破站」；UI 主题精简为喵汪/二次元/水墨；开放自助注册；前端新增 `/register` 页 | client/、node/.env、docs/mockups/、docs/UI-DESIGN-PLAN.md | — |
+| v0.3.1 | 2026-07-02 | 登录注册改为账号+密码（User.email→username）；密码最短 6 位；理由：产品不要求邮箱，降低注册门槛 | client/、node/prisma/、docs/API-PROTOCOL.md | — |
 
 ### 变更模板（复制使用）
 

@@ -19,7 +19,7 @@
 | 原则 | 说明 |
 |------|------|
 | **可爱但不幼稚** | 圆角、emoji  mascot、柔和色；消息区仍要清晰可读 |
-| **主题是个人偏好** | 五套皮肤仅在「个人设置」切换，**不在**页面主体 / banner / 侧栏放切换器 |
+| **主题是个人偏好** | 三套皮肤仅在「个人设置」切换，**不在**页面主体 / banner / 侧栏放切换器 |
 | **玻璃态 + 动态壁纸** | 背景在 `html::before/::after`；侧栏/顶栏半透明 blur，露出壁纸 |
 | **内容区滚动** | `body.app-layout` 占满视口，**只有** `.content` / `.chat-area` 滚动 |
 | **移动优先适配** | 手机：抽屉侧栏 + 底栏；平板：场景横滑条；桌面：完整侧栏 |
@@ -33,7 +33,8 @@
 | Mockup | 路径 | 对应 React 路由（计划） | 主要能力 |
 |--------|------|-------------------------|----------|
 | 首页 / 落地 | `mockups/index.html` | `/` 或 `/chat` 入口 | 品牌展示、进入对话 |
-| 登录 | `mockups/login.html` | `/login` | 邮箱密码、记住我 |
+| 登录 | `mockups/login.html` | `/login` | 账号密码、注册入口 |
+| 注册 | `mockups/register.html` | `/register` | 账号、密码、确认密码；默认角色 `user` |
 | **对话主界面** | `mockups/chat.html` | `/chat` | 会话侧栏、Feature、SSE 聊天、模型切换 |
 | 文档生成 | `mockups/chat-doc-form.html` | `/chat`（Feature=doc-generate） | 表单型 Feature 子视图 |
 | **个人设置** | `mockups/settings.html` | `/settings` | 五主题选择、偏好占位 |
@@ -85,7 +86,7 @@ body.app-layout          → flex 列, height: 100dvh, overflow: hidden
 
 ---
 
-## 5. 五套主题系统
+## 5. 三套主题系统
 
 ### 5.1 主题一览
 
@@ -93,9 +94,7 @@ body.app-layout          → flex 列, height: 100dvh, overflow: hidden
 |----|------|------|----------|
 | `catdog` | 喵汪工坊 | 萌宠粉紫（**默认**） | 粉紫光斑 + 爪印纹理 |
 | `anime` | 星语二次元 | 番剧樱花紫蓝 | pastel 流动渐变 + 花瓣/星点 |
-| `guofeng` | 墨韵国风 | 宣纸墨色朱砂 | 水墨线 + 远山剪影 + 纸纹 |
-| `neon` | 轻霓虹 | 深蓝灰终端 | 低饱和网格 + 角落 cyan/紫辉（**克制，无光污染**） |
-| `conan` | 米花町 | 推理蓝红 | 明亮蓝灰 aurora + 放大镜纹理 |
+| `shuimo` | 水墨 | 宣纸墨色 | 水墨线 + 远山剪影 + 纸纹 |
 
 ### 5.2 技术实现
 
@@ -113,7 +112,7 @@ body.app-layout          → flex 列, height: 100dvh, overflow: hidden
 
 ```
 src/theme/
-  tokens.ts       ← 五主题 CSS 变量（或 CSS Modules 导入 themes.css）
+  tokens.ts       ← 三套主题 CSS 变量（或 CSS Modules 导入 themes.css）
   ThemeProvider   ← 读/写 localStorage，设 data-theme
   useTheme()      ← 当前 themeId + setTheme
   meta.ts         ← 从 themes.js META 迁为 TS 常量
@@ -146,7 +145,7 @@ pages/Settings    ← 主题卡片网格，对齐 mockup
 ### 6.3 个人设置 `settings.html`
 
 - 资料卡（邮箱、角色、配额占位）
-- **主题**：5 张 `theme-card`（预览条 + 名称 + 描述）
+- **主题**：3 张 `theme-card`（预览条 + 名称 + 描述）
 - 偏好区：占位（默认模型、快捷键等 v1.0+）
 
 ### 6.4 管理后台 `admin.html`
@@ -155,11 +154,12 @@ pages/Settings    ← 主题卡片网格，对齐 mockup
 - 概览：stat-card 网格（今日请求、活跃用户、模型数…）
 - v0.2～v0.4 可先用 REST + 简单表格；v1.0 对齐 mockup 完整 CRUD
 
-### 6.5 登录 `login.html`
+### 6.5 登录 / 注册 `login.html` · `register.html`
 
-- 表单：邮箱、密码、记住我、忘记密码（占位）
-- 注册关闭提示（管理员开通）
-- 文案全套走 `META`（各主题称呼不同：铲屎官 / 调查员 / 掌事…）
+- 登录表单：邮箱、密码
+- 登录页底部：**立即注册** 入口
+- 注册页：邮箱、密码、确认密码；默认角色 `user`
+- 文案全套走 `META`（各主题称呼不同：铲屎官 / 掌事…）
 
 ---
 

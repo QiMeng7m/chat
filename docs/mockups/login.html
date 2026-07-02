@@ -5,7 +5,7 @@
   <script>!function(){var t=localStorage.getItem('mascot-theme');if(t&&t!=='catdog')document.documentElement.setAttribute('data-theme',t)}();</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#ff7eb3" />
-  <title>登录 — 喵汪 AI 工坊</title>
+  <title>登录 — 柒梦的小破站</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -17,11 +17,8 @@
     <span class="login-deco login-deco--5 theme-only-catdog" aria-hidden="true">💕</span>
     <span class="login-deco login-deco--1 theme-only-anime" hidden aria-hidden="true">🌸</span>
     <span class="login-deco login-deco--4 theme-only-anime" hidden aria-hidden="true">⭐</span>
-    <span class="login-deco login-deco--1 theme-only-guofeng" hidden aria-hidden="true">🏮</span>
-    <span class="login-deco login-deco--4 theme-only-guofeng" hidden aria-hidden="true">📜</span>
-    <span class="login-deco login-deco--1 theme-only-neon" hidden aria-hidden="true">💠</span>
-    <span class="login-deco login-deco--1 theme-only-conan" hidden aria-hidden="true">🔍</span>
-    <span class="login-deco login-deco--4 theme-only-conan" hidden aria-hidden="true">👓</span>
+    <span class="login-deco login-deco--1 theme-only-shuimo" hidden aria-hidden="true">🖌</span>
+    <span class="login-deco login-deco--4 theme-only-shuimo" hidden aria-hidden="true">📜</span>
 
     <a href="index.html" class="login-back" aria-label="返回首页">
       <span>←</span><span>首页</span>
@@ -35,7 +32,7 @@
           <div class="login-brand-logo">
             <div class="logo-mascot" data-theme-logo>🐱</div>
             <div class="login-brand-logo-text">
-              <strong data-theme-text="brand">喵汪 AI 工坊</strong>
+              <strong data-theme-text="brand">柒梦的小破站</strong>
               <span data-theme-text="tagline">毛茸茸的智能小助手</span>
             </div>
           </div>
@@ -72,10 +69,10 @@
 
             <form action="chat.html" method="get" id="login-form">
               <div class="input-group">
-                <label class="label" for="email">邮箱</label>
+                <label class="label" for="username">账号</label>
                 <div class="input-wrap">
-                  <span class="input-icon" aria-hidden="true">📧</span>
-                  <input class="input" type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required value="admin@example.com" />
+                  <span class="input-icon" aria-hidden="true">👤</span>
+                  <input class="input" type="text" id="username" name="username" placeholder="你的账号" autocomplete="username" required value="admin" />
                 </div>
               </div>
 
@@ -101,8 +98,8 @@
 
             <div class="login-footer">
               <p>
-                <span class="hint-icon" data-theme-text="loginHintIcon">🌸</span>
-                <span data-theme-text="footerHint">注册已关闭，请联系铲屎官管理员开通账号</span>
+                <span data-theme-text="loginFooterPrompt">还没有账号？</span>
+                <a href="register.html">立即注册</a>
               </p>
             </div>
           </div>

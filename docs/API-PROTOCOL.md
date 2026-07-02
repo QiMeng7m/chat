@@ -87,7 +87,7 @@ type UserRole = 'admin' | 'user'
 
 interface UserPublic {
   id: string
-  email: string
+  username: string
   role: UserRole
   dailyQuota: number
   createdAt: string
@@ -175,14 +175,16 @@ interface SessionDetail extends Session {
 
 ## 3. 认证接口
 
-### 3.1 `POST /api/auth/register`（公开 · 可关闭）
+### 3.1 `POST /api/auth/register`（公开 · 默认开启）
+
+> 环境变量 `ALLOW_REGISTRATION` 默认为 `true`；设为 `false` 时返回 403「注册已关闭」。
 
 **请求**
 
 ```json
 {
-  "email": "user@example.com",
-  "password": "至少8位"
+  "username": "qimeng",
+  "password": "至少6位"
 }
 ```
 
@@ -190,7 +192,7 @@ interface SessionDetail extends Session {
 
 ```json
 {
-  "user": { "id": "...", "email": "...", "role": "user", "dailyQuota": 100, "createdAt": "..." },
+  "user": { "id": "...", "username": "...", "role": "user", "dailyQuota": 100, "createdAt": "..." },
   "accessToken": "eyJ..."
 }
 ```
@@ -201,7 +203,7 @@ interface SessionDetail extends Session {
 
 ```json
 {
-  "email": "user@example.com",
+  "username": "qimeng",
   "password": "..."
 }
 ```
@@ -214,7 +216,7 @@ interface SessionDetail extends Session {
 
 ```json
 {
-  "user": { "id": "...", "email": "...", "role": "admin", "dailyQuota": 100, "createdAt": "..." }
+  "user": { "id": "...", "username": "...", "role": "admin", "dailyQuota": 100, "createdAt": "..." }
 }
 ```
 
@@ -638,7 +640,7 @@ data: {}
 
 ```json
 {
-  "email": "member@example.com",
+  "username": "member01",
   "password": "初始密码",
   "role": "user",
   "dailyQuota": 100

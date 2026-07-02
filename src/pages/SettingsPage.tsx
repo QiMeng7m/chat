@@ -3,7 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../theme/ThemeProvider'
 import ThemePicker from '../components/theme/ThemePicker'
+import OwnerProfileEditor from '../components/settings/OwnerProfileEditor'
+import SiteNoticesButton, { SiteNoticesPanel } from '../components/layout/SiteNoticesButton'
 import '../styles/app-layout.css'
+import '../styles/admin.css'
 
 export default function SettingsPage() {
   const { meta } = useTheme()
@@ -27,10 +30,11 @@ export default function SettingsPage() {
               <span className="topbar-title">⚙️ 个人设置</span>
             </div>
             <div className="topbar-right topbar-desktop-only">
+              <SiteNoticesButton />
               {user ? (
                 <>
                   <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
-                    {user.email}
+                    {user.username}
                   </span>
                   <Button type="link" onClick={() => void handleLogout()}>
                     退出
@@ -47,9 +51,9 @@ export default function SettingsPage() {
               <div className="card settings-profile-card">
                 <div className="settings-avatar">{meta.userEmoji}</div>
                 <div>
-                  <div style={{ fontWeight: 800, fontSize: 16 }}>{user.email}</div>
+                  <div style={{ fontWeight: 800, fontSize: 16 }}>{user.username}</div>
                   <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-                    {meta.adminRole} · 额度 🐟 {quotaRemaining}/{quotaTotal}
+                    {meta.adminRole} · 总配额 🐟 {quotaRemaining}/{quotaTotal}
                   </div>
                 </div>
               </div>
@@ -59,6 +63,29 @@ export default function SettingsPage() {
               <h2 id="theme-heading">🎨 界面主题</h2>
               <p>选择视觉风格，会在所有页面生效并保存在本机浏览器中。</p>
               <ThemePicker />
+            </section>
+
+            {user?.role === 'admin' ? (
+              <section className="settings-section" aria-labelledby="owner-heading">
+                <h2 id="owner-heading">👑 主人资料（小柒知识库）</h2>
+                <p>
+                  保存关于主人（王鸿博 / 柒梦）的信息到服务器。访客在对话里问到主人相关问题时，小柒会通过 API 查找并回答。
+                </p>
+                <OwnerProfileEditor />
+              </section>
+            ) : null}
+
+            <section className="settings-section" aria-labelledby="notices-heading">
+              <div className="settings-section-head">
+                <div>
+                  <h2 id="notices-heading">📋 使用须知</h2>
+                  <p>额度、模型权限与账号相关说明（与顶栏 📋 图标内容一致）。</p>
+                </div>
+                <SiteNoticesButton />
+              </div>
+              <div className="site-notices-panel-card">
+                <SiteNoticesPanel />
+              </div>
             </section>
 
             <section className="settings-section" aria-labelledby="pref-heading">

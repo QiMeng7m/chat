@@ -6,6 +6,7 @@ export * from './features.ts'
 export * from './sessions.ts'
 export * from './chat.ts'
 export * from './admin.ts'
+export * from './ownerProfile.ts'
 
 export async function fetchPosts(): Promise<import('./types.ts').Post[]> {
   const res = await fetch('/api/posts')

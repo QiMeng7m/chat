@@ -1,4 +1,4 @@
-import { getAccessToken, parseApiError } from './http.ts'
+import { parseApiError } from './http.ts'
 import type {
   Attachment,
   ChatRequest,
@@ -100,14 +100,10 @@ export async function* streamChat(
     Accept: 'text/event-stream',
   }
 
-  const token = getAccessToken()
-  if (token) {
-    headers.Authorization = `Bearer ${token}`
-  }
-
   const res = await fetch('/api/chat', {
     method: 'POST',
     headers,
+    credentials: 'include',
     body: JSON.stringify(req),
     signal: options.signal,
   })
@@ -172,15 +168,9 @@ export async function uploadChatFile(file: File): Promise<Attachment> {
   const form = new FormData()
   form.append('file', file)
 
-  const headers: Record<string, string> = {}
-  const token = getAccessToken()
-  if (token) {
-    headers.Authorization = `Bearer ${token}`
-  }
-
   const res = await fetch('/api/chat/upload', {
     method: 'POST',
-    headers,
+    credentials: 'include',
     body: form,
   })
 

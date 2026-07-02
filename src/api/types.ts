@@ -104,7 +104,6 @@ export interface ApiErrorBody {
 
 export interface AuthResponse {
   user: UserPublic
-  accessToken: string
 }
 
 export interface ChatRequest {

@@ -1,4 +1,4 @@
-import { clearAccessToken, request, setAccessToken } from './http.ts'
+import { request } from './http.ts'
 import type { AuthResponse, UserPublic } from './types.ts'
 
 export type CaptchaConfig = {
@@ -15,13 +15,11 @@ export async function login(
   password: string,
   turnstileToken?: string,
 ): Promise<AuthResponse> {
-  const data = await request<AuthResponse>('/api/auth/login', {
+  return request<AuthResponse>('/api/auth/login', {
     method: 'POST',
     auth: false,
     body: { username, password, turnstileToken },
   })
-  setAccessToken(data.accessToken)
-  return data
 }
 
 export async function register(
@@ -29,21 +27,15 @@ export async function register(
   password: string,
   turnstileToken?: string,
 ): Promise<AuthResponse> {
-  const data = await request<AuthResponse>('/api/auth/register', {
+  return request<AuthResponse>('/api/auth/register', {
     method: 'POST',
     auth: false,
     body: { username, password, turnstileToken },
   })
-  setAccessToken(data.accessToken)
-  return data
 }
 
 export async function logout(): Promise<void> {
-  try {
-    await request<void>('/api/auth/logout', { method: 'POST' })
-  } finally {
-    clearAccessToken()
-  }
+  await request<void>('/api/auth/logout', { method: 'POST' })
 }
 
 export async function getMe(): Promise<UserPublic> {

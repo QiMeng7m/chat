@@ -2,9 +2,9 @@ import type { FeaturePublic, ModelPublic } from '../api/types'
 
 export const MOCK_MODELS: ModelPublic[] = [
   {
-    id: 'deepseek-chat',
-    label: 'DeepSeek Chat',
-    description: '通用对话，响应快',
+    id: 'deepseek/deepseek-v4-flash',
+    label: 'DeepSeek V4 Flash',
+    description: '快速响应，所有用户可用',
     tags: ['fast'],
     supportsVision: false,
     supportsStream: true,
@@ -12,22 +12,14 @@ export const MOCK_MODELS: ModelPublic[] = [
     recommended: true,
   },
   {
-    id: 'deepseek-coder',
-    label: 'DeepSeek Coder',
-    description: '代码与技术问答',
-    tags: ['code'],
+    id: 'deepseek/deepseek-v4-pro',
+    label: 'DeepSeek V4 Pro',
+    description: '旗舰推理，需管理员授权',
+    tags: ['strong'],
     supportsVision: false,
     supportsStream: true,
-    costTier: 'low',
-  },
-  {
-    id: 'gpt-4o',
-    label: 'GPT-4o',
-    description: '强推理 + 视觉',
-    tags: ['strong', 'vision'],
-    supportsVision: true,
-    supportsStream: true,
     costTier: 'high',
+    requiresPermission: true,
   },
 ]
 
@@ -47,7 +39,7 @@ export const MOCK_FEATURES: FeaturePublic[] = [
     icon: '🛠',
     category: 'code',
     modelPolicy: 'recommended',
-    defaultModelId: 'deepseek-coder',
+    defaultModelId: 'deepseek/deepseek-v4-flash',
   },
   {
     id: 'doc-generate',
@@ -56,7 +48,7 @@ export const MOCK_FEATURES: FeaturePublic[] = [
     icon: '📄',
     category: 'doc',
     modelPolicy: 'recommended',
-    defaultModelId: 'deepseek-chat',
+    defaultModelId: 'deepseek/deepseek-v4-flash',
     uiSchema: {
       type: 'form',
       fields: [
@@ -103,10 +95,10 @@ export const MOCK_FEATURES: FeaturePublic[] = [
     description: '看懂截图',
     icon: '🖼',
     category: 'image',
-    modelPolicy: 'locked',
-    defaultModelId: 'gpt-4o',
+    modelPolicy: 'free',
+    defaultModelId: 'deepseek/deepseek-v4-flash',
   },
 ]
 
 export const DEFAULT_FEATURE_ID = 'tech-qa'
-export const DEFAULT_MODEL_ID = 'deepseek-chat'
+export const DEFAULT_MODEL_ID = 'deepseek/deepseek-v4-flash'

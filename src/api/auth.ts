@@ -1,21 +1,38 @@
 import { clearAccessToken, request, setAccessToken } from './http.ts'
 import type { AuthResponse, UserPublic } from './types.ts'
 
-export async function login(email: string, password: string): Promise<AuthResponse> {
+export type CaptchaConfig = {
+  enabled: boolean
+  siteKey?: string
+}
+
+export async function getCaptchaConfig(): Promise<CaptchaConfig> {
+  return request<CaptchaConfig>('/api/auth/captcha-config', { auth: false })
+}
+
+export async function login(
+  username: string,
+  password: string,
+  turnstileToken?: string,
+): Promise<AuthResponse> {
   const data = await request<AuthResponse>('/api/auth/login', {
     method: 'POST',
     auth: false,
-    body: { email, password },
+    body: { username, password, turnstileToken },
   })
   setAccessToken(data.accessToken)
   return data
 }
 
-export async function register(email: string, password: string): Promise<AuthResponse> {
+export async function register(
+  username: string,
+  password: string,
+  turnstileToken?: string,
+): Promise<AuthResponse> {
   const data = await request<AuthResponse>('/api/auth/register', {
     method: 'POST',
     auth: false,
-    body: { email, password },
+    body: { username, password, turnstileToken },
   })
   setAccessToken(data.accessToken)
   return data

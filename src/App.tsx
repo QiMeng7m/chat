@@ -12,6 +12,7 @@ import AdminProvidersPage from './pages/admin/AdminProvidersPage'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
 import ChatPage from './pages/ChatPage'
 import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 import SettingsPage from './pages/SettingsPage'
 
 function AdminShell() {
@@ -32,6 +33,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route
         path="/chat"

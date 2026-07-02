@@ -1,6 +1,6 @@
 import { Button, Form, Input, message } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { getCaptchaConfig } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 import { ApiError } from '../api/http'
@@ -9,17 +9,15 @@ import TurnstileWidget from '../components/auth/TurnstileWidget'
 import SiteNoticesButton from '../components/layout/SiteNoticesButton'
 import '../styles/login.css'
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const { meta } = useTheme()
-  const { user, login } = useAuth()
+  const { user, register } = useAuth()
   const navigate = useNavigate()
-  const location = useLocation()
   const [loading, setLoading] = useState(false)
   const [captchaEnabled, setCaptchaEnabled] = useState(false)
   const [siteKey, setSiteKey] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [captchaKey, setCaptchaKey] = useState(0)
-  const from = (location.state as { from?: string } | null)?.from ?? '/chat'
 
   useEffect(() => {
     void (async () => {
@@ -42,21 +40,29 @@ export default function LoginPage() {
   }, [])
 
   if (user) {
-    return <Navigate to={from} replace />
+    return <Navigate to="/chat" replace />
   }
 
-  const onFinish = async (values: { username: string; password: string }) => {
+  const onFinish = async (values: { username: string; password: string; confirm: string }) => {
+    if (values.password !== values.confirm) {
+      message.error('两次输入的密码不一致')
+      return
+    }
+    if (values.password.length < 6) {
+      message.error('密码至少 6 位')
+      return
+    }
     if (captchaEnabled && !turnstileToken) {
       message.warning('请先完成人机验证')
       return
     }
     setLoading(true)
     try {
-      await login(values.username, values.password, turnstileToken ?? undefined)
-      message.success('登录成功～')
-      navigate(from, { replace: true })
+      await register(values.username, values.password, turnstileToken ?? undefined)
+      message.success('注册成功～')
+      navigate('/chat', { replace: true })
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : '登录失败，请检查账号密码'
+      const msg = err instanceof ApiError ? err.message : '注册失败，请稍后重试'
       message.error(msg)
       setTurnstileToken(null)
       setCaptchaKey((k) => k + 1)
@@ -69,7 +75,7 @@ export default function LoginPage() {
     <div className="login-page">
       <Link to="/login" className="login-back">
         <span>←</span>
-        <span>首页</span>
+        <span>返回登录</span>
       </Link>
       <Link to="/settings" className="login-settings-link">
         ⚙️ 外观
@@ -98,12 +104,6 @@ export default function LoginPage() {
               ))}
             </h2>
             <p>{meta.loginHeroDesc}</p>
-            <div className="login-features">
-              <span className="login-feature-tag">💬 自由对话</span>
-              <span className="login-feature-tag">🛠 技术问答</span>
-              <span className="login-feature-tag">📄 文档生成</span>
-              <span className="login-feature-tag">🖼 图片分析</span>
-            </div>
           </div>
         </aside>
 
@@ -115,8 +115,8 @@ export default function LoginPage() {
                   <span>{meta.logoEmoji}</span> <span>{meta.logoEmojiAlt}</span>
                 </div>
               </div>
-              <h1>{meta.loginTitle}</h1>
-              <p className="subtitle">{meta.loginSubtitle}</p>
+              <h1>{meta.registerTitle}</h1>
+              <p className="subtitle">{meta.registerSubtitle}</p>
 
               <Form layout="vertical" onFinish={onFinish} initialValues={{ username: '' }}>
                 <Form.Item
@@ -125,16 +125,38 @@ export default function LoginPage() {
                   rules={[
                     { required: true, message: '请输入账号' },
                     { min: 2, message: '账号至少 2 个字符' },
+                    { max: 32, message: '账号最多 32 个字符' },
                   ]}
                 >
-                  <Input placeholder="你的账号" autoComplete="username" size="large" />
+                  <Input placeholder="取一个账号名" autoComplete="username" size="large" />
                 </Form.Item>
                 <Form.Item
                   label="密码"
                   name="password"
-                  rules={[{ required: true, message: '请输入密码' }]}
+                  rules={[
+                    { required: true, message: '请输入密码' },
+                    { min: 6, message: '密码至少 6 位' },
+                  ]}
                 >
-                  <Input.Password placeholder="••••••••" autoComplete="current-password" size="large" />
+                  <Input.Password placeholder="至少 6 位" autoComplete="new-password" size="large" />
+                </Form.Item>
+                <Form.Item
+                  label="确认密码"
+                  name="confirm"
+                  dependencies={['password']}
+                  rules={[
+                    { required: true, message: '请再次输入密码' },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve()
+                        }
+                        return Promise.reject(new Error('两次输入的密码不一致'))
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password placeholder="再次输入密码" autoComplete="new-password" size="large" />
                 </Form.Item>
                 {captchaEnabled && siteKey ? (
                   <Form.Item label="人机验证">
@@ -149,13 +171,13 @@ export default function LoginPage() {
                 ) : null}
                 <Form.Item>
                   <Button type="primary" htmlType="submit" block size="large" loading={loading}>
-                    {meta.loginSubmit}
+                    {meta.registerSubmit}
                   </Button>
                 </Form.Item>
               </Form>
               <p className="login-footer-hint">
-                {meta.loginFooterPrompt}{' '}
-                <Link to="/register">立即注册</Link>
+                {meta.registerFooterPrompt}{' '}
+                <Link to="/login">去登录</Link>
                 {' · '}
                 <SiteNoticesButton mode="public" variant="link" />
               </p>

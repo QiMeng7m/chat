@@ -13,3 +13,17 @@
   color: var(--text-muted);
   text-align: center;
 }
+
+.login-footer-hint a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-footer-hint a:hover {
+  text-decoration: underline;
+}
+
+.turnstile-widget {
+  min-height: 65px;
+}

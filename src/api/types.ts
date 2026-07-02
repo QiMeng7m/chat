@@ -4,9 +4,12 @@ export type UserRole = 'admin' | 'user'
 
 export interface UserPublic {
   id: string
-  email: string
+  username: string
   role: UserRole
-  dailyQuota: number
+  quotaLimit: number
+  quotaUsed: number
+  quotaRemaining: number
+  proAccess: boolean
   createdAt: string
 }
 
@@ -25,6 +28,8 @@ export interface ModelPublic {
   supportsStream: boolean
   costTier: CostTier
   recommended?: boolean
+  /** 为 true 时需用户 proAccess 或 admin 角色方可选用 */
+  requiresPermission?: boolean
 }
 
 export interface UiField {
@@ -155,6 +160,7 @@ export interface ModelAdmin {
   tags: ModelTag[]
   supportsVision: boolean
   costTier: CostTier
+  requiresPermission: boolean
   enabled: boolean
   sortOrder: number
 }
@@ -170,7 +176,7 @@ export interface FeatureAdmin extends FeaturePublic {
 
 export interface UserAdmin extends UserPublic {
   enabled: boolean
-  todayUsage?: number
+  registeredIp?: string
 }
 
 export interface AdminStats {
@@ -186,4 +192,20 @@ export interface Post {
   title: string
   summary: string
   createdAt: string
+}
+
+export type OwnerFact = {
+  id: string
+  topic: string
+  content: string
+}
+
+export type OwnerProfile = {
+  version: 1
+  nicknames: string[]
+  realName?: string
+  title: string
+  summary: string
+  facts: OwnerFact[]
+  updatedAt: number
 }

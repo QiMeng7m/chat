@@ -11,7 +11,7 @@ import {
   DEFAULT_THEME,
   THEME_META,
   THEME_STORAGE_KEY,
-  isThemeId,
+  resolveThemeId,
   type ThemeId,
   type ThemeMeta,
 } from './meta'
@@ -27,7 +27,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null)
 function readStoredTheme(): ThemeId {
   try {
     const saved = localStorage.getItem(THEME_STORAGE_KEY)
-    if (isThemeId(saved)) return saved
+    return resolveThemeId(saved)
   } catch {
     // ignore
   }
@@ -42,12 +42,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.setAttribute('data-theme', id)
     localStorage.setItem(THEME_STORAGE_KEY, id)
     const meta = THEME_META[id]
+    document.title = meta.brand
     const themeMeta = document.querySelector('meta[name="theme-color"]')
     if (themeMeta) themeMeta.setAttribute('content', meta.themeColor)
   }, [])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', themeId)
+    document.title = THEME_META[themeId].brand
     const meta = THEME_META[themeId]
     const themeMeta = document.querySelector('meta[name="theme-color"]')
     if (themeMeta) themeMeta.setAttribute('content', meta.themeColor)

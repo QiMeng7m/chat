@@ -150,23 +150,25 @@ export async function listUsers(): Promise<UserAdmin[]> {
 }
 
 export interface CreateUserParams {
-  email: string
+  username: string
   password: string
   role?: 'admin' | 'user'
-  dailyQuota?: number
+  quotaLimit?: number
 }
 
 export async function createUser(params: CreateUserParams): Promise<UserAdmin> {
   return request<UserAdmin>('/api/admin/users', {
     method: 'POST',
-    body: { role: 'user', dailyQuota: 100, ...params },
+    body: { role: 'user', quotaLimit: 100, ...params },
   })
 }
 
 export interface UpdateUserParams {
   role?: 'admin' | 'user'
-  dailyQuota?: number
+  quotaLimit?: number
+  quotaUsed?: number
   enabled?: boolean
+  proAccess?: boolean
 }
 
 export async function updateUser(id: string, params: UpdateUserParams): Promise<UserAdmin> {

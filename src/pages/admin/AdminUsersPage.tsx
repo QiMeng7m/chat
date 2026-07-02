@@ -9,16 +9,18 @@ import { adminModalFooter } from '../../components/ui/adminModalFooter'
 import { useTheme } from '../../theme/ThemeProvider'
 
 type CreateFormValues = {
-  email: string
+  username: string
   password: string
   role: UserRole
-  dailyQuota: number
+  quotaLimit: number
 }
 
 type EditFormValues = {
   role: UserRole
-  dailyQuota: number
+  quotaLimit: number
+  quotaUsed: number
   enabled: boolean
+  proAccess: boolean
 }
 
 export default function AdminUsersPage() {
@@ -49,13 +51,19 @@ export default function AdminUsersPage() {
 
   const openCreate = () => {
     createForm.resetFields()
-    createForm.setFieldsValue({ role: 'user', dailyQuota: 100 })
+    createForm.setFieldsValue({ role: 'user', quotaLimit: 100 })
     setCreateOpen(true)
   }
 
   const openEdit = (row: UserAdmin) => {
     setEditing(row)
-    editForm.setFieldsValue({ role: row.role, dailyQuota: row.dailyQuota, enabled: row.enabled })
+    editForm.setFieldsValue({
+      role: row.role,
+      quotaLimit: row.quotaLimit,
+      quotaUsed: row.quotaUsed,
+      enabled: row.enabled,
+      proAccess: row.proAccess,
+    })
     setEditOpen(true)
   }
 
@@ -96,7 +104,7 @@ export default function AdminUsersPage() {
     <section>
       <AdminPageHeader
         title={`👥 ${meta.usersLabel}管理`}
-        desc="创建账号、调整角色与每日请求配额"
+        desc="创建账号、调整总配额与已用次数（超额需管理员开通）"
         action={
           <ThemeButton variant="secondary" onClick={openCreate}>
             + 创建用户
@@ -110,25 +118,45 @@ export default function AdminUsersPage() {
           dataSource={items}
           pagination={false}
           columns={[
-            { title: '邮箱', dataIndex: 'email' },
+            { title: '账号', dataIndex: 'username' },
             {
               title: '角色',
               dataIndex: 'role',
               render: (role: UserRole) =>
                 role === 'admin' ? <Tag color="purple">{meta.adminRole}</Tag> : <Tag>{role}</Tag>,
             },
-            { title: '每日配额', dataIndex: 'dailyQuota' },
+            { title: '总配额', dataIndex: 'quotaLimit' },
             {
-              title: '今日用量',
-              dataIndex: 'todayUsage',
-              render: (v: number | undefined, row: UserAdmin) => {
-                if (v === undefined) return '—'
-                return v >= row.dailyQuota ? (
+              title: '已用',
+              dataIndex: 'quotaUsed',
+              render: (v: number, row: UserAdmin) =>
+                v >= row.quotaLimit ? (
                   <span style={{ color: 'var(--warning)' }}>{v}</span>
                 ) : (
                   v
-                )
-              },
+                ),
+            },
+            {
+              title: '剩余',
+              dataIndex: 'quotaRemaining',
+              render: (v: number) => (v <= 0 ? <Tag color="warning">已用完</Tag> : v),
+            },
+            {
+              title: '注册 IP',
+              dataIndex: 'registeredIp',
+              render: (v: string | undefined) => v ?? '—',
+            },
+            {
+              title: 'DeepSeek V4 Pro',
+              dataIndex: 'proAccess',
+              render: (v: boolean, row: UserAdmin) =>
+                row.role === 'admin' ? (
+                  <Tag color="purple">管理员</Tag>
+                ) : v ? (
+                  <Tag color="blue">已开通</Tag>
+                ) : (
+                  <Tag>未开通</Tag>
+                ),
             },
             { title: '状态', dataIndex: 'enabled', render: (v: boolean) => (v ? '正常' : '已禁用') },
             {
@@ -157,10 +185,10 @@ export default function AdminUsersPage() {
         destroyOnHidden
       >
         <Form form={createForm} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="email" label="邮箱" rules={[{ required: true, type: 'email' }]}>
-            <Input placeholder="member@example.com" />
+          <Form.Item name="username" label="账号" rules={[{ required: true, min: 2, max: 32 }]}>
+            <Input placeholder="member01" />
           </Form.Item>
-          <Form.Item name="password" label="初始密码" rules={[{ required: true, min: 8 }]}>
+          <Form.Item name="password" label="初始密码" rules={[{ required: true, min: 6 }]}>
             <Input.Password />
           </Form.Item>
           <Form.Item name="role" label="角色" rules={[{ required: true }]}>
@@ -171,14 +199,14 @@ export default function AdminUsersPage() {
               ]}
             />
           </Form.Item>
-          <Form.Item name="dailyQuota" label="每日配额" rules={[{ required: true }]}>
+          <Form.Item name="quotaLimit" label="总配额" rules={[{ required: true }]}>
             <InputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title={editing ? `编辑：${editing.email}` : '编辑用户'}
+        title={editing ? `编辑：${editing.username}` : '编辑用户'}
         open={editOpen}
         onCancel={() => setEditOpen(false)}
         footer={adminModalFooter(
@@ -198,8 +226,25 @@ export default function AdminUsersPage() {
               ]}
             />
           </Form.Item>
-          <Form.Item name="dailyQuota" label="每日配额" rules={[{ required: true }]}>
-            <InputNumber min={1} style={{ width: '100%' }} />
+          <Form.Item name="quotaLimit" label="总配额" rules={[{ required: true }]}>
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="quotaUsed" label="已用次数" rules={[{ required: true }]}>
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item noStyle shouldUpdate={(prev, cur) => prev.role !== cur.role}>
+            {({ getFieldValue }) =>
+              getFieldValue('role') === 'admin' ? null : (
+                <Form.Item
+                  name="proAccess"
+                  label="DeepSeek V4 Pro 权限"
+                  valuePropName="checked"
+                  extra="开通后该用户可在对话页选用 DeepSeek V4 Pro 模型"
+                >
+                  <Switch />
+                </Form.Item>
+              )
+            }
           </Form.Item>
           <Form.Item name="enabled" label="账号启用" valuePropName="checked">
             <Switch />

@@ -299,6 +299,16 @@ body {
   background: var(--primary);
 }
 
+.app-layout .model-select--locked {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.app-layout .model-select-item--locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .app-layout .quota-badge {
   font-size: 12px;
   font-weight: 700;
@@ -313,6 +323,172 @@ body {
   font-size: 20px;
   text-decoration: none;
   line-height: 1;
+}
+
+.site-notices-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid var(--border-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.site-notices-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-notices-btn--compact {
+  flex-shrink: 0;
+}
+
+.site-notices-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.site-notices-link:hover {
+  text-decoration: underline;
+}
+
+/* 弹窗：居中 + 外侧不滚动，白色卡片内滚动 */
+.site-notices-modal .ant-modal-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-notices-modal .ant-modal {
+  top: 0;
+  padding-bottom: 0;
+  max-width: calc(100vw - 32px);
+}
+
+.site-notices-modal .ant-modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: min(85vh, 640px);
+  overflow: hidden;
+}
+
+.site-notices-modal .ant-modal-header {
+  flex-shrink: 0;
+}
+
+.site-notices-modal .ant-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.site-notices-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: min(58vh, 480px);
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-notices-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
+
+.site-notices-lead {
+  flex-shrink: 0;
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.site-notices-body,
+.site-notices-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.site-notices-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.site-notices-list {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.site-notices-list li + li {
+  margin-top: 6px;
+}
+
+.site-notices-panel-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  max-height: min(52vh, 420px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-notices-panel--embedded {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
+
+.settings-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.settings-section-head h2 {
+  margin: 0 0 8px;
+}
+
+.settings-section-head p {
+  margin: 0;
 }
 
 .app-layout .topbar-compact {

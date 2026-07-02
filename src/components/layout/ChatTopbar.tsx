@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../theme/ThemeProvider'
 import ModelSelect from '../chat/ModelSelect'
+import SiteNoticesButton from './SiteNoticesButton'
 import { useChat } from '../chat/ChatContext'
+import { isModelAccessible } from '../../lib/modelAccess'
 
 type ChatTopbarProps = {
   onMenuClick?: () => void
@@ -24,6 +26,7 @@ export default function ChatTopbar({ onMenuClick }: ChatTopbarProps) {
 
   const title = currentFeature ? `${currentFeature.icon} ${currentFeature.name}` : '💬 对话'
   const primaryTag = models.find((m) => m.id === modelId)?.tags[0]
+  const isModelDisabled = (model: (typeof models)[number]) => !isModelAccessible(model, user)
 
   return (
     <header className="topbar">
@@ -45,8 +48,10 @@ export default function ChatTopbar({ onMenuClick }: ChatTopbarProps) {
             onChange={setModelId}
             disabled={modelLocked}
             compact
+            isModelDisabled={isModelDisabled}
           />
         )}
+        <SiteNoticesButton className="site-notices-btn--compact" />
       </div>
 
       <div className="topbar-right topbar-desktop-only">
@@ -58,6 +63,7 @@ export default function ChatTopbar({ onMenuClick }: ChatTopbarProps) {
             value={modelId}
             onChange={setModelId}
             disabled={modelLocked}
+            isModelDisabled={isModelDisabled}
           />
         )}
         <span className={`quota-badge${quotaError ? ' quota-badge--warn' : ''}`}>
@@ -65,9 +71,10 @@ export default function ChatTopbar({ onMenuClick }: ChatTopbarProps) {
         </span>
         {user ? (
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
-            {user.email}
+            {user.username}
           </span>
         ) : null}
+        <SiteNoticesButton />
         <Link to="/settings" className="user-settings-link" aria-label="个人设置">
           ⚙️
         </Link>

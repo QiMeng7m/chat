@@ -1,7 +1,5 @@
 import type { ApiErrorBody } from './types.ts'
 
-const TOKEN_KEY = 'accessToken'
-
 export class ApiError extends Error {
   readonly code: string
   readonly status: number
@@ -14,18 +12,6 @@ export class ApiError extends Error {
     this.code = code
     this.details = details
   }
-}
-
-export function getAccessToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY)
-}
-
-export function setAccessToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token)
-}
-
-export function clearAccessToken(): void {
-  localStorage.removeItem(TOKEN_KEY)
 }
 
 export async function parseApiError(res: Response): Promise<ApiError> {
@@ -53,7 +39,7 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { body, auth = true, headers: initHeaders, ...rest } = options
+  const { body, auth: _auth = true, headers: initHeaders, ...rest } = options
 
   const headers = new Headers(initHeaders)
 
@@ -61,16 +47,10 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     headers.set('Content-Type', 'application/json')
   }
 
-  if (auth) {
-    const token = getAccessToken()
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`)
-    }
-  }
-
   const res = await fetch(path, {
     ...rest,
     headers,
+    credentials: 'include',
     body:
       body === undefined
         ? undefined

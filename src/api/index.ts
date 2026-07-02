@@ -1,4 +1,4 @@
-export { ApiError, clearAccessToken, getAccessToken, request } from './http.ts'
+export { ApiError, request } from './http.ts'
 export * from './types.ts'
 export * from './auth.ts'
 export * from './models.ts'

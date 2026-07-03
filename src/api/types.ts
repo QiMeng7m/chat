@@ -208,3 +208,19 @@ export type OwnerProfile = {
   facts: OwnerFact[]
   updatedAt: number
 }
+
+export type UserFact = {
+  id: string
+  topic: string
+  content: string
+}
+
+/** 登录用户的自我介绍与结构化记忆 */
+export type UserProfile = {
+  version: 1
+  realName?: string
+  nicknames: string[]
+  summary: string
+  facts: UserFact[]
+  updatedAt: number
+}

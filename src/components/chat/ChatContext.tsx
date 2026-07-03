@@ -14,6 +14,7 @@ import { getFeatures } from '../../api/features'
 import { ApiError } from '../../api/http'
 import { getModels } from '../../api/models'
 import { getOwnerProfile } from '../../api/ownerProfile'
+import { getUserProfile, updateUserProfile } from '../../api/userProfile'
 import {
   createSession as apiCreateSession,
   getSession as apiGetSession,
@@ -35,6 +36,17 @@ import {
   getDefaultOwnerProfile,
   isOwnerRelatedQuery,
 } from '../../lib/ownerProfile'
+import {
+  answerUserProfileQuery,
+  ASK_NAME_PROMPT,
+  createUserProfileAssistantMessage,
+  formatProfileApiError,
+  formatSaveConfirmation,
+  getDefaultUserProfile,
+  isPersonalInfoQuery,
+  isSelfIntroMessage,
+  resolveUserProfileAction,
+} from '../../lib/userProfile'
 import {
   enrichModelsForDisplay,
   isModelAccessible,
@@ -433,6 +445,82 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               .map(([k, v]) => `${k}: ${v}`)
               .join('\n')
           : '')
+
+      const mightBeProfileInteraction =
+        user &&
+        (isSelfIntroMessage(trimmed) ||
+          isPersonalInfoQuery(trimmed) ||
+          /身高|体重|性格|爱好|名字|姓名/.test(trimmed))
+
+      if (mightBeProfileInteraction) {
+        let userProfile = getDefaultUserProfile()
+        try {
+          userProfile = await getUserProfile()
+        } catch {
+          message.warning('无法加载已保存的资料')
+        }
+
+        const action = resolveUserProfileAction(trimmed, userProfile, messages)
+        if (action) {
+          const activeSessionId = ensureActiveSession()
+          const userMessage: ChatMessage = {
+            id: createId(),
+            role: 'user',
+            content: displayText,
+            createdAt: Date.now(),
+          }
+
+          if (action.type === 'reject') {
+            const assistantMessage = createUserProfileAssistantMessage(action.message)
+            const nextMessages = [...messages, userMessage, assistantMessage]
+            setMessages(nextMessages)
+            upsertCurrentSession(nextMessages, sessionTitleFromMessage(displayText), activeSessionId)
+            return
+          }
+
+          if (action.type === 'ask_name') {
+            const assistantMessage = createUserProfileAssistantMessage(ASK_NAME_PROMPT)
+            const nextMessages = [...messages, userMessage, assistantMessage]
+            setMessages(nextMessages)
+            upsertCurrentSession(nextMessages, sessionTitleFromMessage(displayText), activeSessionId)
+            return
+          }
+
+          if (action.type === 'query') {
+            const assistantMessage = createUserProfileAssistantMessage(
+              answerUserProfileQuery(trimmed, userProfile),
+            )
+            const nextMessages = [...messages, userMessage, assistantMessage]
+            setMessages(nextMessages)
+            upsertCurrentSession(nextMessages, sessionTitleFromMessage(displayText), activeSessionId)
+            return
+          }
+
+          if (action.type === 'save') {
+            try {
+              const saved = await updateUserProfile(action.profile)
+              const assistantMessage = createUserProfileAssistantMessage(
+                formatSaveConfirmation(saved),
+              )
+              const nextMessages = [...messages, userMessage, assistantMessage]
+              setMessages(nextMessages)
+              upsertCurrentSession(nextMessages, sessionTitleFromMessage(displayText), activeSessionId)
+            } catch (err) {
+              const apiErr = err instanceof ApiError ? err : null
+              const reply = formatProfileApiError(
+                apiErr?.code ?? 'INTERNAL_ERROR',
+                apiErr?.message ?? '保存个人资料失败，请稍后重试',
+              )
+              message.error(apiErr?.message ?? '保存个人资料失败')
+              const assistantMessage = createUserProfileAssistantMessage(reply)
+              const nextMessages = [...messages, userMessage, assistantMessage]
+              setMessages(nextMessages)
+              upsertCurrentSession(nextMessages, sessionTitleFromMessage(displayText), activeSessionId)
+            }
+            return
+          }
+        }
+      }
 
       if (isOwnerRelatedQuery(trimmed, messages)) {
         const activeSessionId = ensureActiveSession()

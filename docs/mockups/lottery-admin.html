@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script>!function(){var t=localStorage.getItem('mascot-theme');if(t&&t!=='catdog')document.documentElement.setAttribute('data-theme',t)}();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#a78bfa" />
+  <title>奖池管理 — UI 原型</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .lottery-admin-effect {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--surface-2);
+      border: 2px solid var(--border-soft);
+      color: var(--text-secondary);
+    }
+    .lottery-admin-effect.is-buff {
+      background: #fff7ed;
+      border-color: #fde68a;
+      color: #b45309;
+    }
+    .lottery-admin-effect.is-plus {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #059669;
+    }
+    .lottery-admin-color-dot {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border-soft);
+    }
+    .prize-form-preview {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      border: 2px dashed var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-hover);
+    }
+    .prize-form-row {
+      display: grid;
+      grid-template-columns: 1fr 80px 100px;
+      gap: 10px;
+      align-items: end;
+    }
+    @media (max-width: 640px) {
+      .prize-form-row { grid-template-columns: 1fr; }
+    }
+    .effect-lock-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(92, 61, 74, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 2px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .modal-card h2 {
+      margin: 0 0 16px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .btn-ghost {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 2px solid var(--border-soft);
+      background: var(--surface);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="app-layout">
+  <div class="mockup-banner">
+    UI 原型 · 抽奖奖池 · <a href="lottery.html">用户抽奖页</a> · <a href="admin.html">管理后台</a>
+  </div>
+
+  <div class="drawer-overlay" data-drawer-close aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <button type="button" class="btn-icon drawer-close-btn" data-drawer-close aria-label="关闭菜单">✕</button>
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="logo-mascot dog" data-theme-logo>🐶</div>
+          <div>管理后台<span class="subtitle">铲屎官控制台</span></div>
+        </div>
+      </div>
+      <nav class="sidebar-body">
+        <a class="admin-nav-item" href="admin.html">📊 概览</a>
+        <a class="admin-nav-item" href="admin.html">🔌 Provider</a>
+        <a class="admin-nav-item" href="admin.html">🤖 模型</a>
+        <a class="admin-nav-item" href="admin.html">🎀 Feature</a>
+        <a class="admin-nav-item" href="admin.html">👥 小伙伴</a>
+        <a class="admin-nav-item active" href="lottery-admin.html">🎡 抽奖奖池</a>
+        <a class="admin-nav-item" href="settings.html">⚙️ 个人设置</a>
+      </nav>
+      <div style="padding:14px;border-top:2px dashed var(--border-soft)">
+        <a href="lottery.html" style="font-size:13px;font-weight:600;color:var(--text-secondary)">← 预览用户页</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="menu-btn" data-drawer-toggle aria-label="打开菜单">☰</button>
+          <span class="topbar-title" style="font-weight:800">🎡 奖池管理</span>
+        </div>
+        <div class="topbar-right">
+          <span style="font-size:13px;font-weight:700;color:var(--secondary)">🐾 admin</span>
+          <a href="settings.html" class="user-settings-link" aria-label="个人设置">⚙️</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="page-header" style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px">
+          <div>
+            <h1>🎡 奖池管理</h1>
+            <p>配置圆盘奖励名称与效果（类型 + 符号 + 数量），后台按结构化字段执行</p>
+          </div>
+          <button type="button" class="btn-primary" id="open-modal">+ 添加奖励</button>
+        </div>
+
+        <div class="admin-card" style="margin-top:16px">
+          <table class="data-table" style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="text-align:left;font-size:12px;color:var(--text-muted)">
+                <th style="padding:10px 8px;width:56px">颜色</th>
+                <th style="padding:10px 8px">奖励名称</th>
+                <th style="padding:10px 8px;width:160px">效果</th>
+                <th style="padding:10px 8px;width:64px">排序</th>
+                <th style="padding:10px 8px;width:100px">操作</th>
+              </tr>
+            </thead>
+            <tbody style="font-size:14px;font-weight:600">
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#ff7eb3"></span></td>
+                <td style="padding:12px 8px">一等奖</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect">—</span></td>
+                <td style="padding:12px 8px">0</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#86efac"></span></td>
+                <td style="padding:12px 8px">再来一次</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect is-plus">抽奖次数 +1</span></td>
+                <td style="padding:12px 8px">1</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#4ade80"></span></td>
+                <td style="padding:12px 8px">机会翻倍</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect is-plus">抽奖次数 ×2</span></td>
+                <td style="padding:12px 8px">2</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#fbbf24"></span></td>
+                <td style="padding:12px 8px">幸运加倍</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect is-buff">下次奖励 ×2</span></td>
+                <td style="padding:12px 8px">3</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#fb7185"></span></td>
+                <td style="padding:12px 8px">额外奖品</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect is-buff">下次奖励 +1</span></td>
+                <td style="padding:12px 8px">4</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#7dd3fc"></span></td>
+                <td style="padding:12px 8px">里程礼包</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect is-plus">运动里程 +3km</span></td>
+                <td style="padding:12px 8px">5</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#67e8f9"></span></td>
+                <td style="padding:12px 8px">里程倍增</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect is-plus">运动里程 ×2</span></td>
+                <td style="padding:12px 8px">6</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+              <tr style="border-top:2px solid var(--border-soft)">
+                <td style="padding:12px 8px"><span class="lottery-admin-color-dot" style="background:#a78bfa"></span></td>
+                <td style="padding:12px 8px">谢谢参与</td>
+                <td style="padding:12px 8px"><span class="lottery-admin-effect">—</span></td>
+                <td style="padding:12px 8px">4</td>
+                <td style="padding:12px 8px"><button type="button" class="btn-ghost" style="font-size:12px">删除</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="admin-card" style="margin-top:16px;padding:16px 20px">
+          <h3 style="margin:0 0 8px;font-size:15px">配置说明</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-secondary);line-height:1.8">
+            <li>三种效果类型均支持 <strong>+</strong> 与 <strong>×</strong></li>
+            <li><strong>抽奖次数</strong>：<code>+</code> 增加次数，<code>×</code> 将当前总次数倍增（即时）</li>
+            <li><strong>运动里程</strong>：<code>+</code> 加公里，<code>×</code> 将当日总里程倍增（即时）</li>
+            <li><strong>下次抽奖奖励</strong>：<code>+</code> / <code>×</code> 均挂 Buff；下次抽奖时按 <code>(1+加和)×连乘</code> 转出多个奖品</li>
+            <li>例：<code>+1</code> 与 <code>×2</code> 并存 → 下次转出 <strong>4</strong> 个奖品；<code>×2</code> 再 <code>×2</code> → <strong>4</strong> 个</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加奖励弹窗 -->
+  <div class="modal-overlay" id="prize-modal" hidden>
+    <div class="modal-card" role="dialog" aria-labelledby="modal-title">
+      <h2 id="modal-title">添加奖励</h2>
+
+      <div class="input-group">
+        <label class="label" for="prize-label">奖励名称</label>
+        <input class="input" id="prize-label" type="text" placeholder="如：再来一次、幸运加倍" value="再来一次" />
+      </div>
+
+      <div class="input-group" style="margin-top:14px">
+        <label class="label" for="prize-target">奖励类型</label>
+        <select class="input" id="prize-target">
+          <option value="none">普通奖励（无效果）</option>
+          <option value="draw_chance" selected>抽奖次数</option>
+          <option value="next_draw_reward">下次抽奖奖励</option>
+          <option value="distance_km">运动里程</option>
+        </select>
+      </div>
+
+      <div class="prize-form-row" style="margin-top:14px">
+        <div class="input-group" style="margin:0">
+          <label class="label" for="prize-op">运算符号</label>
+          <select class="input" id="prize-op">
+            <option value="+">+ 加</option>
+            <option value="*">× 乘</option>
+          </select>
+          <p class="effect-lock-hint" id="op-hint">+ 为增加，× 为倍增；三种类型均支持两种符号</p>
+        </div>
+        <div class="input-group" style="margin:0">
+          <label class="label" for="prize-value">数量</label>
+          <input class="input" id="prize-value" type="number" min="1" max="99" value="1" />
+        </div>
+      </div>
+
+      <div class="prize-form-preview" id="effect-preview">效果预览：抽奖次数 +1（抽中后立即生效）</div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" id="close-modal">取消</button>
+        <button type="button" class="btn-primary">添加</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TARGET_META = {
+      none: { label: '普通奖励', timing: '', unit: '' },
+      draw_chance: { label: '抽奖次数', timing: '抽中后立即生效', unit: '' },
+      next_draw_reward: { label: '下次奖励', timing: '下次抽奖时生效，无机会时保留', unit: '' },
+      distance_km: { label: '运动里程', timing: '抽中后立即计入统计', unit: 'km' },
+    }
+    const ALL_OPS = ['+', '*']
+
+    const targetEl = document.getElementById('prize-target')
+    const opEl = document.getElementById('prize-op')
+    const valueEl = document.getElementById('prize-value')
+    const previewEl = document.getElementById('effect-preview')
+    const opHintEl = document.getElementById('op-hint')
+
+    function syncForm() {
+      const target = targetEl.value
+      const meta = TARGET_META[target]
+      const opSelect = opEl
+
+      if (target === 'none') {
+        opSelect.innerHTML = '<option value="">—</option>'
+        opSelect.disabled = true
+        valueEl.disabled = true
+        previewEl.textContent = '效果预览：无（仅展示名称）'
+        opHintEl.textContent = '普通奖励无需配置符号与数量'
+        return
+      }
+
+      opSelect.disabled = false
+      valueEl.disabled = false
+      opSelect.innerHTML = ALL_OPS.map((o) => {
+        const text = o === '+' ? '+ 加' : '× 乘'
+        return `<option value="${o}">${text}</option>`
+      }).join('')
+
+      const op = opSelect.value
+      if (op === '*') {
+        valueEl.min = '2'
+        if (Number(valueEl.value) < 2) valueEl.value = '2'
+      } else {
+        valueEl.min = '1'
+        if (Number(valueEl.value) < 1) valueEl.value = '1'
+      }
+
+      const val = valueEl.value
+      const unit = meta.unit || ''
+      const opDisplay = op === '*' ? '×' : '+'
+      previewEl.textContent = `效果预览：${meta.label} ${opDisplay}${val}${unit}（${meta.timing}）`
+      opHintEl.textContent = target === 'next_draw_reward'
+        ? '下次奖励：+ 增加转出个数，× 倍增转出个数；多条 Buff 按 (1+加和)×连乘 合并'
+        : target === 'draw_chance'
+          ? '+ 增加次数，× 将当前总次数倍增'
+          : '+ 增加公里，× 将当日总里程倍增'
+    }
+
+    targetEl.addEventListener('change', syncForm)
+    opEl.addEventListener('change', syncForm)
+    valueEl.addEventListener('input', syncForm)
+    syncForm()
+
+    const modal = document.getElementById('prize-modal')
+    document.getElementById('open-modal').addEventListener('click', () => { modal.hidden = false })
+    document.getElementById('close-modal').addEventListener('click', () => { modal.hidden = true })
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.hidden = true })
+  </script>
+  <script src="responsive.js"></script>
+  <script src="themes.js"></script>
+</body>
+</html>

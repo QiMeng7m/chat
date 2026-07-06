@@ -39,6 +39,10 @@
 | 文档生成 | `mockups/chat-doc-form.html` | `/chat`（Feature=doc-generate） | 表单型 Feature 子视图 |
 | **个人设置** | `mockups/settings.html` | `/settings` | 五主题选择、偏好占位 |
 | 管理后台 | `mockups/admin.html` | `/admin/*` | Provider / 模型 / Feature / 用户 |
+| **圆盘抽奖** | `mockups/lottery.html` | `/lottery` | 打卡、转盘、机会徽章、Buff 条、多奖品结果 |
+| **抽奖奖池** | `mockups/lottery-admin.html` | `/admin/lottery` | 奖品效果配置（类型 + 符号 + 数量） |
+
+**设计文档**：[LOTTERY-EFFECTS-DESIGN.md](./LOTTERY-EFFECTS-DESIGN.md)（奖品效果、Buff 连乘、API 契约）
 
 **静态资源**
 
@@ -48,8 +52,9 @@
 | `themes.css` | 五主题变量、壁纸、玻璃面板、设置页主题卡片 |
 | `themes.js` | 主题切换、`META` 文案、`localStorage` |
 | `responsive.js` | 抽屉、底栏、移动菜单 |
+| `lottery-mockup.css` | 抽奖页原型专用样式 |
 
-**本地预览**：浏览器直接打开 `docs/mockups/index.html` 或 `settings.html`。
+**本地预览**：浏览器直接打开 `docs/mockups/index.html`、`settings.html` 或 `lottery.html`。
 
 ---
 

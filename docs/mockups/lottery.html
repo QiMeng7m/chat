@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script>!function(){var t=localStorage.getItem('mascot-theme');if(t&&t!=='catdog')document.documentElement.setAttribute('data-theme',t)}();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff7eb3" />
+  <title>圆盘抽奖 — UI 原型</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="lottery-mockup.css" />
+</head>
+<body>
+  <div class="lottery-page">
+    <a href="index.html" class="lottery-back"><span>←</span><span>首页</span></a>
+    <a href="settings.html" class="lottery-settings-link">⚙️ 外观</a>
+    <span class="lottery-prototype-tag">UI 原型 · 抽奖效果系统</span>
+
+    <div class="lottery-shell lottery-shell-wide">
+      <header class="lottery-header">
+        <span style="font-size:48px;line-height:1;display:block;margin-bottom:8px" data-theme-logo>🐱</span>
+        <h1>🎡 圆盘抽奖</h1>
+        <p>打卡获得机会 · 奖品可 +次数 / 下次奖励翻倍 · Buff 保留至下次抽奖</p>
+      </header>
+
+      <!-- 状态切换：预览不同 UI -->
+      <div class="lottery-state-tabs" role="tablist" aria-label="界面状态预览">
+        <button type="button" class="lottery-state-tab active" data-state="normal">常态：有机会</button>
+        <button type="button" class="lottery-state-tab" data-state="buff-ready">待生效 ×2</button>
+        <button type="button" class="lottery-state-tab" data-state="buff-wait">无机会 · Buff 保留</button>
+        <button type="button" class="lottery-state-tab" data-state="multi-win">多奖品结果 ×4</button>
+      </div>
+
+      <!-- 状态 A：正常有机会 -->
+      <div class="lottery-state-panel active" data-panel="normal">
+        <div class="lottery-body lottery-body-split">
+          <section class="lottery-panel">
+            <div class="lottery-checkin-head">
+              <div>
+                <h2>运动打卡</h2>
+                <p class="lottery-hint">每日打卡一次，获得基础抽奖机会</p>
+              </div>
+              <span class="lottery-tag success">今日已打卡</span>
+            </div>
+            <div class="lottery-exercise-stats">
+              <div class="lottery-exercise-stat">
+                <span class="lottery-exercise-stat-label">本周已累计运动</span>
+                <strong>12.50</strong> km
+              </div>
+              <div class="lottery-exercise-stat">
+                <span class="lottery-exercise-stat-label">本月已累计运动</span>
+                <strong>48.20</strong> 公里
+              </div>
+            </div>
+            <button type="button" class="lottery-btn" disabled>今日已打卡</button>
+          </section>
+
+          <section class="lottery-panel">
+            <div class="lottery-chances-badge">今日抽奖机会：剩余 <strong>1</strong> / 共 <strong>1</strong> 次</div>
+            <div class="lottery-wheel-placeholder" aria-hidden="true"></div>
+            <div class="lottery-result-banner">
+              <span class="lottery-hint">你有 1 次抽奖机会，点击开始</span>
+            </div>
+            <button type="button" class="lottery-btn">🎲 开始抽奖</button>
+          </section>
+
+          <section class="lottery-panel">
+            <h2>获奖记录</h2>
+            <p class="lottery-hint">最近 30 条</p>
+            <ul class="lottery-records">
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#ff7eb3"></span> 用户*** · 一等奖</li>
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#a78bfa"></span> 小*** · 谢谢参与</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <!-- 状态 B：有机会 + 待生效 Buff -->
+      <div class="lottery-state-panel" data-panel="buff-ready">
+        <div class="lottery-body lottery-body-split">
+          <section class="lottery-panel">
+            <div class="lottery-checkin-head">
+              <div><h2>运动打卡</h2><p class="lottery-hint">每日打卡一次</p></div>
+              <span class="lottery-tag success">今日已打卡</span>
+            </div>
+            <div class="lottery-exercise-stats">
+              <div class="lottery-exercise-stat">
+                <span class="lottery-exercise-stat-label">本周已累计运动</span>
+                <strong>15.00</strong> km
+              </div>
+            </div>
+            <button type="button" class="lottery-btn" disabled>今日已打卡</button>
+          </section>
+
+          <section class="lottery-panel">
+            <div class="lottery-chances-badge">今日抽奖机会：剩余 <strong>1</strong> / 共 <strong>2</strong> 次</div>
+            <div class="lottery-buff-bar" role="status">
+              <span class="buff-icon">⚡</span>
+              <span>待生效：<strong>下次奖励 ×2</strong>（本次抽奖将转出 2 个奖品）</span>
+            </div>
+            <div class="lottery-wheel-placeholder" aria-hidden="true"></div>
+            <div class="lottery-result-banner">
+              <span class="lottery-hint">上次抽中「幸运加倍」，下次抽奖奖励翻倍</span>
+            </div>
+            <button type="button" class="lottery-btn">🎲 开始抽奖</button>
+          </section>
+
+          <section class="lottery-panel">
+            <h2>获奖记录</h2>
+            <ul class="lottery-records">
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#fbbf24"></span> 你 · 幸运加倍</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <!-- 状态 C：无机会但 Buff 保留 -->
+      <div class="lottery-state-panel" data-panel="buff-wait">
+        <div class="lottery-body lottery-body-split">
+          <section class="lottery-panel">
+            <div class="lottery-checkin-head">
+              <div><h2>运动打卡</h2><p class="lottery-hint">明天打卡后可继续抽奖</p></div>
+              <span class="lottery-tag success">今日已打卡</span>
+            </div>
+            <button type="button" class="lottery-btn" disabled>今日已打卡</button>
+          </section>
+
+          <section class="lottery-panel">
+            <div class="lottery-chances-badge">今日抽奖机会：剩余 <strong>0</strong> / 共 <strong>1</strong> 次</div>
+            <div class="lottery-buff-bar muted" role="status">
+              <span class="buff-icon">⚡</span>
+              <span>待生效：下次转出 <strong>4</strong> 个奖品（+1 ×2，获得机会后自动生效）</span>
+            </div>
+            <div class="lottery-wheel-placeholder" aria-hidden="true"></div>
+            <div class="lottery-result-banner">
+              <span class="lottery-hint">今日机会已用完；Buff 已保留（+1 与 ×2 合并为转出 4 个）</span>
+            </div>
+            <button type="button" class="lottery-btn" disabled>今日机会已用完</button>
+          </section>
+
+          <section class="lottery-panel">
+            <h2>获奖记录</h2>
+            <ul class="lottery-records">
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#fb7185"></span> 你 · 额外奖品 +1</li>
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#fbbf24"></span> 你 · 幸运加倍 ×2</li>
+            </ul>
+            <p class="lottery-hint" style="margin-top:10px">+1 与 ×2 合并：(1+1)×2 = 4 个奖品</p>
+          </section>
+        </div>
+      </div>
+
+      <!-- 状态 D：消费 Buff 后的多奖品结果 -->
+      <div class="lottery-state-panel" data-panel="multi-win">
+        <div class="lottery-body lottery-body-split">
+          <section class="lottery-panel">
+            <div class="lottery-checkin-head">
+              <div><h2>运动打卡</h2></div>
+              <span class="lottery-tag success">今日已打卡</span>
+            </div>
+            <button type="button" class="lottery-btn" disabled>今日已打卡</button>
+          </section>
+
+          <section class="lottery-panel">
+            <div class="lottery-chances-badge">今日抽奖机会：剩余 <strong>0</strong> / 共 <strong>1</strong> 次</div>
+            <div class="lottery-wheel-placeholder" aria-hidden="true"></div>
+            <div class="lottery-result-banner has-winner">
+              <span class="lottery-result-label">恭喜获得（奖励 ×4 已生效）</span>
+              <div class="lottery-prize-list">
+                <span class="lottery-prize-chip"><span class="lottery-prize-dot" style="background:#ff7eb3"></span>一等奖</span>
+                <span class="lottery-prize-chip"><span class="lottery-prize-dot" style="background:#a78bfa"></span>谢谢参与</span>
+                <span class="lottery-prize-chip"><span class="lottery-prize-dot" style="background:#86efac"></span>三等奖</span>
+                <span class="lottery-prize-chip"><span class="lottery-prize-dot" style="background:#fbbf24"></span>幸运加倍</span>
+              </div>
+            </div>
+            <button type="button" class="lottery-btn" disabled>今日机会已用完</button>
+            <p class="lottery-hint" style="text-align:center;margin-top:10px">若第 4 个又是「×2」，将重新入队留给下次</p>
+          </section>
+
+          <section class="lottery-panel">
+            <h2>获奖记录</h2>
+            <ul class="lottery-records">
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#ff7eb3"></span> 你 · 一等奖</li>
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#a78bfa"></span> 你 · 谢谢参与</li>
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#86efac"></span> 你 · 三等奖</li>
+              <li class="lottery-record-item"><span class="lottery-prize-dot" style="background:#fbbf24"></span> 你 · 幸运加倍</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <footer class="lottery-footer">
+        设计文档：<a href="../LOTTERY-EFFECTS-DESIGN.md">LOTTERY-EFFECTS-DESIGN.md</a>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.lottery-state-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const state = tab.dataset.state
+        document.querySelectorAll('.lottery-state-tab').forEach((t) => t.classList.toggle('active', t === tab))
+        document.querySelectorAll('.lottery-state-panel').forEach((p) => {
+          p.classList.toggle('active', p.dataset.panel === state)
+        })
+      })
+    })
+  </script>
+  <script src="themes.js"></script>
+</body>
+</html>

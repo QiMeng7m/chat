@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import RequireAdmin from './components/auth/RequireAdmin'
-import RequireAuth from './components/auth/RequireAuth'
+import RequireChatAccess from './components/auth/RequireChatAccess'
+import RoleAwareHomeRedirect from './components/auth/RoleAwareHomeRedirect'
 import { ChatProvider } from './components/chat/ChatContext'
 import AdminLayout from './components/layout/AdminLayout'
 import AppLayout from './components/layout/AppLayout'
@@ -41,11 +42,11 @@ function App() {
       <Route
         path="/chat"
         element={
-          <RequireAuth>
+          <RequireChatAccess>
             <ChatProvider>
               <AppLayout />
             </ChatProvider>
-          </RequireAuth>
+          </RequireChatAccess>
         }
       >
         <Route index element={<ChatPage />} />
@@ -65,8 +66,8 @@ function App() {
         <Route path="users" element={<AdminUsersPage />} />
         <Route path="lottery" element={<AdminLotteryPage />} />
       </Route>
-      <Route path="/" element={<Navigate to="/chat" replace />} />
-      <Route path="*" element={<Navigate to="/chat" replace />} />
+      <Route path="/" element={<RoleAwareHomeRedirect />} />
+      <Route path="*" element={<RoleAwareHomeRedirect />} />
     </Routes>
   )
 }

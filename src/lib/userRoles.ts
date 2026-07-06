@@ -17,8 +17,13 @@ export function userRoleSelectOptions(adminLabel: string) {
   ]
 }
 
+export function homePathForRole(role?: UserRole | null): string {
+  if (role === 'runner') return '/lottery'
+  return '/chat'
+}
+
 export function postLoginPath(role: UserRole, from?: string): string {
   if (role === 'runner') return '/lottery'
   if (from && from !== '/login') return from
-  return '/chat'
+  return homePathForRole(role)
 }

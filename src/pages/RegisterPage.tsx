@@ -4,6 +4,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { getCaptchaConfig } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 import { ApiError } from '../api/http'
+import { postLoginPath } from '../lib/userRoles'
 import { useTheme } from '../theme/ThemeProvider'
 import TurnstileWidget from '../components/auth/TurnstileWidget'
 import SiteNoticesButton from '../components/layout/SiteNoticesButton'
@@ -40,7 +41,7 @@ export default function RegisterPage() {
   }, [])
 
   if (user) {
-    return <Navigate to="/chat" replace />
+    return <Navigate to={postLoginPath(user.role)} replace />
   }
 
   const onFinish = async (values: { username: string; password: string; confirm: string }) => {

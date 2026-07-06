@@ -8,7 +8,6 @@ import LotteryCheckInForm from '../components/lottery/LotteryCheckInForm'
 import LotteryWinRecords from '../components/lottery/LotteryWinRecords'
 import LotteryWheel, { type LotteryWheelPhase } from '../components/lottery/LotteryWheel'
 import { formatPendingBuffSummary } from '../lib/lotteryEffectLabels'
-import { useTheme } from '../theme/ThemeProvider'
 import '../styles/lottery.css'
 
 const SPIN_SPEED_DEG = 480
@@ -30,7 +29,6 @@ const DEFAULT_STATUS: LotteryStatus = {
 }
 
 export default function LotteryPage() {
-  const { meta } = useTheme()
   const [prizes, setPrizes] = useState<LotteryPrize[]>([])
   const [records, setRecords] = useState<Awaited<ReturnType<typeof listLotteryWinRecords>>>([])
   const [status, setStatus] = useState<LotteryStatus>(DEFAULT_STATUS)
@@ -234,10 +232,7 @@ export default function LotteryPage() {
 
       <div className="lottery-shell lottery-shell-wide">
         <header className="lottery-header">
-          <span className="lottery-logo" aria-hidden="true">
-            {meta.logoEmoji}
-          </span>
-          <h1>🎡 圆盘抽奖</h1>
+          <h1>圆盘抽奖</h1>
           <p>每日打卡获得机会，奖品可增减次数、里程或下次奖励倍数</p>
         </header>
 
@@ -314,14 +309,8 @@ export default function LotteryPage() {
             <LotteryWinRecords records={records} loading={recordsLoading} />
           </section>
         </div>
-
-        <footer className="lottery-footer">
-          <span>
-            已有账号？<Link to="/login">去登录</Link>
-          </span>
-        </footer>
       </div>
     </div>
   )
 }
-
+

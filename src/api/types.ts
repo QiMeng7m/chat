@@ -221,6 +221,8 @@ export interface LotteryPrize {
   effectOp: LotteryEffectOp | ''
   effectValue: number
   effectTiming: 'immediate' | 'on_next_draw'
+  enabled?: boolean
+  drawnThisWeek?: boolean
   createdAt: string
 }
 

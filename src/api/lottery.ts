@@ -56,6 +56,14 @@ export async function removeLotteryPrize(id: string): Promise<void> {
   })
 }
 
+export async function updateLotteryPrize(id: string, enabled: boolean): Promise<LotteryPrize> {
+  const data = await request<{ prize: LotteryPrize }>(`/api/lottery/prizes/${id}`, {
+    method: 'PATCH',
+    body: { enabled },
+  })
+  return data.prize
+}
+
 export async function drawLottery(): Promise<LotteryDrawResult> {
   return request<LotteryDrawResult>('/api/lottery/draw', {
     method: 'POST',

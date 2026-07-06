@@ -1,8 +1,8 @@
-import { Form, Input, InputNumber, Modal, Popconfirm, Select, Spin, Table, message } from 'antd'
+import { Form, Input, InputNumber, Modal, Popconfirm, Select, Spin, Switch, Table, Tag, message } from 'antd'
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { addLotteryPrize, listLotteryPrizes, removeLotteryPrize } from '../../api/lottery'
+import { addLotteryPrize, listLotteryPrizes, removeLotteryPrize, updateLotteryPrize } from '../../api/lottery'
 
 import { ApiError } from '../../api/http'
 
@@ -174,6 +174,26 @@ export default function AdminLotteryPage() {
 
 
 
+  const handleToggleEnabled = async (row: LotteryPrize, enabled: boolean) => {
+
+    try {
+
+      await updateLotteryPrize(row.id, enabled)
+
+      message.success(enabled ? '已启用' : '已禁用')
+
+      await load()
+
+    } catch (err) {
+
+      message.error(err instanceof ApiError ? err.message : '操作失败')
+
+    }
+
+  }
+
+
+
   const previewLabel =
 
     effectTarget === 'none'
@@ -204,7 +224,7 @@ export default function AdminLotteryPage() {
 
         title="🎡 奖池管理"
 
-        desc="配置奖励名称与效果（类型 + 符号 + 数量），访客在 /lottery 页面抽取"
+        desc="配置奖励名称与效果；本周抽中的奖励自动禁用，可手动重新启用"
 
         action={
 
@@ -284,6 +304,56 @@ export default function AdminLotteryPage() {
 
             {
 
+              title: '状态',
+
+              key: 'status',
+
+              width: 140,
+
+              render: (_, row) => {
+
+                if (row.enabled !== false) {
+
+                  return <Tag color="success">启用</Tag>
+
+                }
+
+                if (row.drawnThisWeek) {
+
+                  return <Tag color="warning">本周已抽中</Tag>
+
+                }
+
+                return <Tag>已禁用</Tag>
+
+              },
+
+            },
+
+            {
+
+              title: '启用',
+
+              key: 'enabled',
+
+              width: 80,
+
+              render: (_, row) => (
+
+                <Switch
+
+                  checked={row.enabled !== false}
+
+                  onChange={(checked) => void handleToggleEnabled(row, checked)}
+
+                />
+
+              ),
+
+            },
+
+            {
+
               title: '创建时间',
 
               dataIndex: 'createdAt',
@@ -300,7 +370,7 @@ export default function AdminLotteryPage() {
 
               key: 'actions',
 
-              width: 100,
+              width: 160,
 
               render: (_, row) => (
 

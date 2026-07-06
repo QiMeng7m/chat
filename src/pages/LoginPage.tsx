@@ -4,6 +4,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { getCaptchaConfig } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 import { ApiError } from '../api/http'
+import { postLoginPath } from '../lib/userRoles'
 import { useTheme } from '../theme/ThemeProvider'
 import TurnstileWidget from '../components/auth/TurnstileWidget'
 import SiteNoticesButton from '../components/layout/SiteNoticesButton'
@@ -19,7 +20,7 @@ export default function LoginPage() {
   const [siteKey, setSiteKey] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [captchaKey, setCaptchaKey] = useState(0)
-  const from = (location.state as { from?: string } | null)?.from ?? '/chat'
+  const from = (location.state as { from?: string } | null)?.from
 
   useEffect(() => {
     void (async () => {
@@ -42,7 +43,7 @@ export default function LoginPage() {
   }, [])
 
   if (user) {
-    return <Navigate to={from} replace />
+    return <Navigate to={postLoginPath(user.role, from)} replace />
   }
 
   const onFinish = async (values: { username: string; password: string }) => {
@@ -52,9 +53,9 @@ export default function LoginPage() {
     }
     setLoading(true)
     try {
-      await login(values.username, values.password, turnstileToken ?? undefined)
+      const loggedInUser = await login(values.username, values.password, turnstileToken ?? undefined)
       message.success('登录成功～')
-      navigate(from, { replace: true })
+      navigate(postLoginPath(loggedInUser.role, from), { replace: true })
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : '登录失败，请检查账号密码'
       message.error(msg)

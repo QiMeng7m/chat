@@ -152,7 +152,7 @@ export async function listUsers(): Promise<UserAdmin[]> {
 export interface CreateUserParams {
   username: string
   password: string
-  role?: 'admin' | 'user'
+  role?: UserAdmin['role']
   quotaLimit?: number
 }
 
@@ -164,7 +164,7 @@ export async function createUser(params: CreateUserParams): Promise<UserAdmin> {
 }
 
 export interface UpdateUserParams {
-  role?: 'admin' | 'user'
+  role?: UserAdmin['role']
   quotaLimit?: number
   quotaUsed?: number
   enabled?: boolean

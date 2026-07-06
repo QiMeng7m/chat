@@ -6,6 +6,7 @@ import type { UserAdmin, UserRole } from '../../api/types'
 import { AdminPageHeader } from '../../components/layout/AdminLayout'
 import ThemeButton from '../../components/ui/ThemeButton'
 import { adminModalFooter } from '../../components/ui/adminModalFooter'
+import { userRoleLabel, userRoleSelectOptions } from '../../lib/userRoles'
 import { useTheme } from '../../theme/ThemeProvider'
 
 type CreateFormValues = {
@@ -123,7 +124,13 @@ export default function AdminUsersPage() {
               title: '角色',
               dataIndex: 'role',
               render: (role: UserRole) =>
-                role === 'admin' ? <Tag color="purple">{meta.adminRole}</Tag> : <Tag>{role}</Tag>,
+                role === 'admin' ? (
+                  <Tag color="purple">{userRoleLabel(role, meta.adminRole)}</Tag>
+                ) : role === 'runner' ? (
+                  <Tag color="green">{userRoleLabel(role, meta.adminRole)}</Tag>
+                ) : (
+                  <Tag>{userRoleLabel(role, meta.adminRole)}</Tag>
+                ),
             },
             { title: '总配额', dataIndex: 'quotaLimit' },
             {
@@ -192,12 +199,7 @@ export default function AdminUsersPage() {
             <Input.Password />
           </Form.Item>
           <Form.Item name="role" label="角色" rules={[{ required: true }]}>
-            <Select
-              options={[
-                { label: '普通用户', value: 'user' },
-                { label: meta.adminRole, value: 'admin' },
-              ]}
-            />
+            <Select options={userRoleSelectOptions(meta.adminRole)} />
           </Form.Item>
           <Form.Item name="quotaLimit" label="总配额" rules={[{ required: true }]}>
             <InputNumber min={1} style={{ width: '100%' }} />
@@ -219,12 +221,7 @@ export default function AdminUsersPage() {
       >
         <Form form={editForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="role" label="角色" rules={[{ required: true }]}>
-            <Select
-              options={[
-                { label: '普通用户', value: 'user' },
-                { label: meta.adminRole, value: 'admin' },
-              ]}
-            />
+            <Select options={userRoleSelectOptions(meta.adminRole)} />
           </Form.Item>
           <Form.Item name="quotaLimit" label="总配额" rules={[{ required: true }]}>
             <InputNumber min={0} style={{ width: '100%' }} />

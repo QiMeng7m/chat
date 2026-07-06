@@ -13,7 +13,7 @@ import type { UserPublic } from '../api/types'
 type AuthContextValue = {
   user: UserPublic | null
   loading: boolean
-  login: (username: string, password: string, turnstileToken?: string) => Promise<void>
+  login: (username: string, password: string, turnstileToken?: string) => Promise<UserPublic>
   register: (username: string, password: string, turnstileToken?: string) => Promise<void>
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
@@ -61,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (username: string, password: string, turnstileToken?: string) => {
       const res = await apiLogin(username.trim(), password, turnstileToken)
       applyUser(res.user)
+      return res.user
     },
     [applyUser],
   )

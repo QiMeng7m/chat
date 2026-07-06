@@ -1,6 +1,6 @@
 /** AI 对话工具 — 前后端共享类型（对齐 docs/API-PROTOCOL.md） */
 
-export type UserRole = 'admin' | 'user'
+export type UserRole = 'admin' | 'user' | 'runner'
 
 export interface UserPublic {
   id: string
@@ -207,4 +207,82 @@ export type OwnerProfile = {
   summary: string
   facts: OwnerFact[]
   updatedAt: number
+}
+
+export type LotteryEffectTarget = 'none' | 'draw_chance' | 'next_draw_reward' | 'distance_km'
+export type LotteryEffectOp = '+' | '*'
+
+export interface LotteryPrize {
+  id: string
+  label: string
+  color: string
+  sortOrder: number
+  effectTarget: LotteryEffectTarget
+  effectOp: LotteryEffectOp | ''
+  effectValue: number
+  effectTiming: 'immediate' | 'on_next_draw'
+  createdAt: string
+}
+
+export interface LotteryPrizeList {
+  items: LotteryPrize[]
+}
+
+export interface LotteryAppliedEffect {
+  action: 'immediate' | 'queued' | 'consumed'
+  target: string
+  op: string
+  value: number
+  label: string
+}
+
+export interface LotteryPendingEffectView {
+  label: string
+  op: LotteryEffectOp
+  value: number
+}
+
+export interface LotteryDrawResult {
+  prizes: LotteryPrize[]
+  prize: LotteryPrize
+  appliedEffects?: LotteryAppliedEffect[]
+  status: LotteryStatus
+}
+
+export interface LotteryCheckIn {
+  id: string
+  imageUrl: string
+  distanceKm: number
+  createdAt: string
+}
+
+export interface LotteryStatus {
+  checkedInToday: boolean
+  drawsGranted: number
+  drawsUsed: number
+  chancesRemaining: number
+  drawUsedToday: boolean
+  canCheckIn: boolean
+  canDraw: boolean
+  weekDistanceKm: number
+  monthDistanceKm: number
+  pendingEffects: LotteryPendingEffectView[]
+  nextRollCount: number
+}
+
+export interface LotteryCheckInResult {
+  checkIn: LotteryCheckIn
+  status: LotteryStatus
+}
+
+export interface LotteryWinRecord {
+  id: string
+  displayName: string
+  prizeLabel: string
+  prizeColor: string
+  createdAt: string
+}
+
+export interface LotteryWinRecordList {
+  items: LotteryWinRecord[]
 }

@@ -182,15 +182,15 @@ export function buildSiteNoticeSections(ctx: SiteNoticesContext): SiteNoticeSect
     .filter((section) => section.items.length > 0)
 }
 
-export function audiencesForUser(role?: 'admin' | 'user' | null): NoticeAudience[] {
+export function audiencesForUser(role?: 'admin' | 'user' | 'runner' | null): NoticeAudience[] {
   if (role === 'admin') return ['public', 'user', 'admin']
-  if (role === 'user') return ['public', 'user']
+  if (role === 'user' || role === 'runner') return ['public', 'user']
   return ['public']
 }
 
 export function noticesContextFromMeta(
   meta: ThemeMeta,
-  role?: 'admin' | 'user' | null,
+  role?: 'admin' | 'user' | 'runner' | null,
 ): SiteNoticesContext {
   return {
     quotaLabel: meta.quotaLabel,

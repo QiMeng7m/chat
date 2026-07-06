@@ -12,10 +12,10 @@
   position: relative;
 }
 
-.lottery-back,
 .lottery-settings-link {
   position: fixed;
   top: 16px;
+  right: 16px;
   z-index: 10;
   display: inline-flex;
   align-items: center;
@@ -32,15 +32,6 @@
   transition: border-color 0.15s, color 0.15s;
 }
 
-.lottery-back {
-  left: 16px;
-}
-
-.lottery-settings-link {
-  right: 16px;
-}
-
-.lottery-back:hover,
 .lottery-settings-link:hover {
   border-color: var(--primary);
   color: var(--primary);

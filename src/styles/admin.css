@@ -167,3 +167,47 @@
   justify-content: center;
   min-height: 120px;
 }
+
+.lottery-admin-color-dot {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  vertical-align: middle;
+}
+
+.lottery-admin-effect-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--surface-2);
+  border: 2px solid var(--border-soft);
+  color: var(--text-secondary);
+}
+
+.lottery-admin-effect-tag.has-effect {
+  background: var(--primary-soft);
+  border-color: var(--border-soft);
+  color: var(--primary-hover);
+}
+
+.lottery-admin-effect-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.lottery-admin-effect-preview {
+  margin-top: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--primary-soft);
+  border: 2px dashed var(--border);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-hover);
+}

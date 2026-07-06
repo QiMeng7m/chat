@@ -9,10 +9,12 @@ import AdminFeaturesPage from './pages/admin/AdminFeaturesPage'
 import AdminModelsPage from './pages/admin/AdminModelsPage'
 import AdminOverviewPage from './pages/admin/AdminOverviewPage'
 import AdminProvidersPage from './pages/admin/AdminProvidersPage'
+import AdminLotteryPage from './pages/admin/AdminLotteryPage'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
 import ChatPage from './pages/ChatPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import LotteryPage from './pages/LotteryPage'
 import SettingsPage from './pages/SettingsPage'
 
 function AdminShell() {
@@ -35,6 +37,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/lottery" element={<LotteryPage />} />
       <Route
         path="/chat"
         element={
@@ -60,6 +63,7 @@ function App() {
         <Route path="models" element={<AdminModelsPage />} />
         <Route path="features" element={<AdminFeaturesPage />} />
         <Route path="users" element={<AdminUsersPage />} />
+        <Route path="lottery" element={<AdminLotteryPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/chat" replace />} />
       <Route path="*" element={<Navigate to="/chat" replace />} />

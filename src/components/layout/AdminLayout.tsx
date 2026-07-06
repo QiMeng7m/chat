@@ -55,6 +55,9 @@ export default function AdminLayout({
             <NavLink to="/admin/users" className="admin-nav-item">
               👥 {meta.usersLabel}
             </NavLink>
+            <NavLink to="/admin/lottery" className="admin-nav-item">
+              🎡 奖池管理
+            </NavLink>
             <NavLink to="/settings" className="admin-nav-item">
               ⚙️ 个人设置
             </NavLink>

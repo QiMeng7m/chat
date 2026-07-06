@@ -2,7 +2,7 @@
 
 > **文档版本**：v1.0  
 > **日期**：2026-06-18  
-> **关联**：[DESIGN.md](./DESIGN.md)（架构） · [API-PROTOCOL.md](./API-PROTOCOL.md)（接口） · [UI-DESIGN-PLAN.md](./UI-DESIGN-PLAN.md)（UI 设计与开发速查） · [mockups/](./mockups/)（UI 原型）
+> **关联**：[DESIGN.md](./DESIGN.md)（架构） · [API-PROTOCOL.md](./API-PROTOCOL.md)（接口） · [UI-DESIGN-PLAN.md](./UI-DESIGN-PLAN.md)（UI 设计与开发速查） · [CHAT-ROUTING.md](./CHAT-ROUTING.md)（回答路由） · [RAG-DESIGN.md](./RAG-DESIGN.md)（RAG） · [mockups/](./mockups/)（UI 原型）
 
 ---
 
@@ -30,6 +30,8 @@ M6 图片上传与 Vision
 M7 用量与限流
 M8 管理后台
 M9 个人站集成（可选）
+M10 回答路由与 RAG（Phase 4）
+M11 站长公开生平（Owner Bio · Phase 4a 核心）
 ```
 
 ---
@@ -179,6 +181,47 @@ M9 个人站集成（可选）
 
 ---
 
+### M10 回答路由与 RAG（Phase 4）
+
+> 设计：[CHAT-ROUTING.md](./CHAT-ROUTING.md) · [RAG-DESIGN.md](./RAG-DESIGN.md) · 协议：[API-PROTOCOL.md §6.5](./API-PROTOCOL.md)
+
+| ID | 功能点 | 用户故事 | 优先级 | 版本 | 验收标准 |
+|----|--------|----------|--------|------|----------|
+| M10-01 | 结构化直答 | 作为用户，问主人/个人资料时秒回且准确 | P0 | v1.2 | Path A 命中；无 `POST /api/chat`；与 API 数据一致 |
+| M10-02 | 意图注册表 | 作为开发者，新增结构化域有统一注册入口 | P1 | v1.2 | `chatRouting/registry.ts`；含 priority 与测试 |
+| M10-03 | 知识库问答 | 作为用户，在 kb-chat 场景问站点文章 | P0 | v1.2 | Path B；回答有据；无资料时声明 |
+| M10-04 | 场景分流 | 作为用户，自由对话不走 RAG | P0 | v1.2 | `free-chat` 为 Path C；无 citations |
+| M10-05 | 引用来源 | 作为用户，看到回答参考了哪篇文章 | P2 | v1.2 | SSE `citations` 或 message_end 展示 |
+| M10-06 | 配额查询直答 | 作为用户，问「还剩几次」本地回答 | P2 | v1.2 | `user_quota` 意图；读 `/api/auth/me` |
+| M10-07 | 文档入库 | 作为管理员，上传 md/txt 或粘贴进知识库 | P0 | v1.2 | admin API；status=indexed 后可检索 |
+| M10-08 | 对话入库 | 作为管理员，对话中说「保存到知识库：…」 | P1 | v1.2 | `knowledge_ingest`；写 Document 并索引 |
+| M10-09 | 结构化 vs RAG 分流 | 作为用户，改身高走 profile、长文走进知识库 | P0 | v1.2 | 身高→PATCH profile；长文→ingest |
+| M10-10 | 上传 vs 问答识别 | 作为用户，带前缀则入库、否则走大模型 | P0 | v1.2 | 见 CHAT-ROUTING §3.7；Network 无 chat 即上传 |
+
+**依赖**：M3 Feature、M4 对话、M1 鉴权  
+**非目标 v1**：后端 Path A（§6.5.4）、自动意图识别跳过 Feature 选择
+
+---
+
+### M11 站长公开生平（Owner Bio · Phase 4a 核心）
+
+> 设计：[RAG-DESIGN.md §3.5](./RAG-DESIGN.md) · 路由：[CHAT-ROUTING.md §6](./CHAT-ROUTING.md)
+
+| ID | 功能点 | 用户故事 | 优先级 | 版本 | 验收标准 |
+|----|--------|----------|--------|------|----------|
+| M11-01 | 公开资料库 | 作为站长，保存基本信息与简历并建立索引 | P0 | v1.2 | `owner-public` KB；《基本信息》《简历》indexed |
+| M11-02 | 了解主人 | 作为访客，问站长身高/经历/技术 | P0 | v1.2 | Feature `ask-owner`；RAG 回答与资料一致 |
+| M11-03 | 自由对话并存 | 作为用户，闲聊时不查站长资料 | P0 | v1.2 | `free-chat` 无 RAG；默认新会话 |
+| M11-04 | 设置页维护 | 作为站长，在设置页保存而非聊天口令 | P0 | v1.2 | OwnerProfileEditor + sync-kb；无强制前缀 |
+| M11-05 | 场景 UI | 作为用户，清楚「了解主人」与「自由对话」区别 | P1 | v1.2 | Feature 文案；可选消息角标 |
+| M11-06 | 引用来源 | 作为访客，看到回答依据哪篇资料 | P2 | v1.2 | citations：《基本信息》/《简历》 |
+| M11-07 | KB 空 fallback | 作为访客，资料未索引时有兜底 | P2 | v1.2 | 可选 profile API 短答或提示站长完善资料 |
+
+**依赖**：M10（RAG 基础设施）、M3 Feature、现有 `SiteOwnerProfile`  
+**与 M10 关系**：M11 是 RAG 的**首要产品场景**；通用 `kb-chat`/Post 可 M10 并行或后置
+
+---
+
 ## 4. 版本与里程碑
 
 | 版本 | 包含模块 | 交付物 |
@@ -189,8 +232,7 @@ M9 个人站集成（可选）
 | **v0.4** | + M1、M5（DB）、M7 | 多用户上线版 |
 | **v1.0** | + M6、M8 | 图片、完整管理后台 |
 | **v1.1** | + M9-01、M2-07 | 文章联动、模型自动拉取 |
-
----
+| **v1.2** | + M10、M11（规划） | RAG 基础设施；站长公开生平 + 自由对话并存 |
 
 ## 5. 功能优先级矩阵
 
@@ -221,6 +263,11 @@ M9 个人站集成（可选）
 | BR-05 | 图片消息仅允许 `supportsVision=true` 的模型 |
 | BR-06 | 软删除 session 不物理删除 message（便于审计，可选硬删策略） |
 | BR-07 | 开发环境 v0.4 前允许无 auth；生产必须 auth |
+| BR-ROUTE-01 | Path A 仅用于有明确 API 与字段的结构化数据；长文走 RAG 不得走路径 A |
+| BR-ROUTE-02 | Path A 在前端 `sendMessage` 中先于 `POST /api/chat` |
+| BR-ROUTE-03 | Path B vs C 由 `feature.ragEnabled` 决定，不由关键字推断 |
+| BR-ROUTE-04 | Path A 命中时禁止调用 `POST /api/chat` 与大模型 |
+| BR-RAG-01 | `ChatRequest` 不得携带 RAG 调参；由 Feature 配置决定（见 API-PROTOCOL §6.4） |
 
 ---
 

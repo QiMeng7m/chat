@@ -7,6 +7,9 @@
 > **Push 门禁**：`git push` 前自动检查（`.githooks/pre-push` + Cursor `beforeShellExecution`）。技术栈相关文件已改但本文档未同步时，**拒绝 push**；须先执行 stack-changelog。自检：`npm run check:stack-changelog`。
 >
 > **仓库布局**（2026-06-30）：前后端已拆分为两个独立仓库——前端 `chat/`（本文档所在项目）、后端 `node/`（仅代码，无设计文档）。开发时分别启动，前端 Vite 代理 `/api` 至 `localhost:3000`。
+>
+> **最后更新**：2026-07-06  
+> **文档版本**：v0.4.1-doc
 
 ---
 
@@ -37,7 +40,8 @@ Phase 2         AI 对话 MVP（模型切换、流式输出、Prompt 功能模�
     ↓
 Phase 3         小体量多用户（登录、会话隔离、日限额、部署上线）
     ↓
-Phase 4         差异化功能（工具调用、RAG、可选本地 Ollama）
+Phase 4         差异化功能（站长公开生平 RAG + 自由对话、工具调用、可选 Ollama）
+                  设计：RAG-DESIGN §3.5 · CHAT-ROUTING §6 · API-PROTOCOL §4.5
 ```
 
 > 变更 Roadmap 时，执行 **stack-changelog** skill 或在 [§9 设计变更记录](#9-设计变更记录) 追加条目，并更新本节版本号。
@@ -63,6 +67,7 @@ Phase 4         差异化功能（工具调用、RAG、可选本地 Ollama）
 | AI 模型 | JZ Internal one-api | Anthropic + OpenAI-compat 双协议 | ✅ 已接入 |
 | AI Provider 适配 | `server/src/providers/` | stream.ts 路由协议；anthropic/openai 多模态 | ✅ 已采用 |
 | 文件上传 | multer | ^2.2 | ✅ 已采用 |
+| RAG / Embedding | 自研 `lib/rag/` + OpenAI-compat `/v1/embeddings` | Phase 4 | ⏳ 设计完成，待 `node/` 实现 |
 | 部署 | — | — | ⏳ 计划单 VPS + Nginx + pm2 |
 
 ### 2.2 已否决 / 暂缓的选项
@@ -74,6 +79,7 @@ Phase 4         差异化功能（工具调用、RAG、可选本地 Ollama）
 | 独立云数据库 | 暂缓 | 单 VPS 可同机部署 PG | 并发写入瓶颈或需异地容灾 |
 | 前端直连模型 API | 否决 | Key 暴露、无法统一限流 | 永不采用（生产环境） |
 | LangChain 全家桶 | 暂缓 | MVP 复杂度过高 | Phase 4 需要 Agent/RAG 时再评估 |
+| LLM 自动识别「上传 vs 问答」 | 暂缓（Phase 4c） | 前缀规则零 token、可测；自然语言意图易误判 | 用户强需求且无前缀时复评 |
 
 ---
 
@@ -245,6 +251,25 @@ interface ChatRequest {
 // 响应：text/event-stream（SSE）
 ```
 
+### 5.3 计划接口（Phase 4 · RAG 与回答路由）
+
+> 契约详情：[API-PROTOCOL.md](./API-PROTOCOL.md) v1.4 · [RAG-DESIGN.md](./RAG-DESIGN.md) · [CHAT-ROUTING.md](./CHAT-ROUTING.md)
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/knowledge/bases` | GET | 用户可选公开知识库列表 |
+| `/api/knowledge/bases/:kbId/documents` | POST | 写入一篇文档并异步索引（含对话 ingest） |
+| `/api/admin/knowledge/*` | CRUD | 知识库与文档管理、Post 导入、文件上传 |
+| `POST /api/chat` | POST | 不变；`feature.ragEnabled` 时 Path B，否则 Path C |
+| — | — | Path A 结构化直答/对话入库：**不**新增 chat 端点，前端或 §6.5.4 JSON |
+
+**回答路由**：Path A → Path B（`ask-owner`/`kb-chat`）→ Path C（`free-chat`）。Owner Bio 核心场景见 RAG-DESIGN §3.5。
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/site/owner-profile/sync-kb` | POST | 站长 profile → owner-public 索引（M11） |
+| `/api/site/owner-profile/resume` | PUT | 站长简历 → owner-public 索引（M11） |
+
 > **迁移提示**：若改用 WebSocket，保留 `ChatRequest` 语义，仅替换传输层；前端 `api/chat.ts` 单独封装。
 
 ---
@@ -261,6 +286,9 @@ interface ChatRequest {
 | ADR-006 | 模型 OpenAI 兼容接口 | 2026-06-18 | 一套 adapter 切换 DeepSeek/Ollama/OpenAI |
 | ADR-007 | 小体量单 VPS，不买独立云库 | 2026-06-18 | 成本约 100～200 元/月，运维简单 |
 | ADR-008 | API Key 仅服务端 | 2026-06-18 | 安全 + 统一限流计费 |
+| ADR-009 | 三段式回答路由 | 2026-07-06 | 结构化直答 / RAG+LLM / 纯 LLM 分流，降 token 与幻觉 |
+| ADR-010 | 对话入库用显式前缀 | 2026-07-06 | 上传 vs 问答在 sendMessage 前判定；避免 LLM 意图误判 |
+| ADR-011 | Owner Bio 与 free-chat 分 Feature 并存 | 2026-07-06 | 了解站长用 RAG；通用对话保留纯 LLM，不收窄为仅生平 |
 
 ---
 
@@ -396,6 +424,8 @@ interface ProviderConfig {
 | v0.2.2 | 2026-06-18 | 接入 multer 图片上传与 vision 多模态对话；理由：对话需支持截图/图片分析，服务端统一存储并转 base64 转发上游，避免前端直连模型 | server/、client/、docs/ | — |
 | v0.3.0 | 2026-07-02 | 品牌重塑为「柒梦的小破站」；UI 主题精简为喵汪/二次元/水墨；开放自助注册；前端新增 `/register` 页 | client/、node/.env、docs/mockups/、docs/UI-DESIGN-PLAN.md | — |
 | v0.3.1 | 2026-07-02 | 登录注册改为账号+密码（User.email→username）；密码最短 6 位；理由：产品不要求邮箱，降低注册门槛 | client/、node/prisma/、docs/API-PROTOCOL.md | — |
+| v0.4.0-doc | 2026-07-06 | Phase 4 设计留痕：新增 RAG-DESIGN.md、CHAT-ROUTING.md；API-PROTOCOL v1.4（RAG、§6.5 三段路由、§4.4 知识写入）；PRD M10；理由：先契约后实现，明确结构化直答 vs RAG 问答 vs 纯 LLM，对话入库用前缀与 Path A 拦截，避免与大模型对话混淆 | docs/ | — |
+| v0.4.1-doc | 2026-07-06 | Owner Bio 核心场景（§3.5/M11）：owner-public KB、ask-owner 与 free-chat 并存；设置页 sync-kb；ask-owner 跳过 owner Path A；理由：产品需「了解站长」+「自由对话」双能力，非仅生平或仅通用 KB | docs/ | — |
 
 ### 变更模板（复制使用）
 
@@ -411,6 +441,8 @@ interface ProviderConfig {
 |-------------|------|
 | [README.md](../README.md) | 安装、启动、常用命令 |
 | 本文档 `docs/DESIGN.md` | 架构、契约、演进、迁移 |
+| [RAG-DESIGN.md](./RAG-DESIGN.md) | Phase 4 RAG 信息检索：数据模型、API、接入点 |
+| [CHAT-ROUTING.md](./CHAT-ROUTING.md) | 三段式回答路由：结构化直答 / RAG+LLM / 纯 LLM |
 | [`.cursor/skills/stack-changelog/`](../.cursor/skills/stack-changelog/SKILL.md) | 技术栈/设计变更留痕（对话触发 `stack-changelog`） |
 | [`.cursor/skills/crm/`](../.cursor/skills/crm/SKILL.md) | 提交→拉取→推送（对话触发 `crm`）；push 前联动 stack-changelog |
 

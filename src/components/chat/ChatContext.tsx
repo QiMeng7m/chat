@@ -52,15 +52,11 @@ import {
   isModelAccessible,
   pickAccessibleDefaultModel,
 } from '../../lib/modelAccess'
+import { pickDefaultFeatureId, sortFeaturesForDisplay } from '../../lib/featureOrder'
 import type { ChatMessage, SessionSummary } from '../../types/chat'
 
 function pickDefaultModel(models: ModelPublic[], user: UserPublic | null): string | null {
   return pickAccessibleDefaultModel(models, user)
-}
-
-function pickDefaultFeature(features: FeaturePublic[]): string | null {
-  if (!features.length) return null
-  return features.find((f) => f.id === 'tech-qa')?.id ?? features[0]!.id
 }
 
 type ChatContextValue = {
@@ -215,7 +211,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       try {
         const [modelList, featureList] = await Promise.all([getModels(), getFeatures()])
         setModels(enrichModelsForDisplay(modelList))
-        setFeatures(featureList)
+        setFeatures(sortFeaturesForDisplay(featureList))
         if (!modelList.length) {
           message.warning('暂无可用模型，请联系管理员配置 Provider 与模型')
         }
@@ -247,7 +243,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       return
     }
     if (!features.some((f) => f.id === featureId)) {
-      const next = pickDefaultFeature(features)
+      const next = pickDefaultFeatureId(features)
       if (next) setFeatureIdState(next)
     }
   }, [features, featureId])
@@ -368,7 +364,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       if (!isLocalSessionId(id)) {
         try {
           const detail = await apiGetSession(id)
-          setFeatureIdState(detail.featureId ?? pickDefaultFeature(features) ?? '')
+          setFeatureIdState(detail.featureId ?? pickDefaultFeatureId(features) ?? '')
           setModelIdState(detail.defaultModelId ?? pickDefaultModel(models, user) ?? '')
           const loaded: ChatMessage[] = detail.messages
             .filter((m) => m.role === 'user' || m.role === 'assistant')
@@ -522,7 +518,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      if (isOwnerRelatedQuery(trimmed, messages)) {
+      if (featureId !== 'ask-owner' && isOwnerRelatedQuery(trimmed, messages)) {
         const activeSessionId = ensureActiveSession()
         const userMessage: ChatMessage = {
           id: createId(),

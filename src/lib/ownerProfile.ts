@@ -6,7 +6,7 @@ export type { OwnerFact, OwnerProfile } from '../api/types'
 export const ASSISTANT_NAME = '小柒'
 
 export const ASSISTANT_GREETING =
-  '你好，欢迎来到柒梦的小破站，我是你的AI助手，小柒，我可以为你解决问题，或者了解主人的详细信息。'
+  '你好，欢迎来到柒梦的小破站！我是 AI 助手小柒。想闲聊请选「自由对话」；想了解站长公开资料请切换到「了解主人」。'
 
 /** 触发主人资料检索的关键词 */
 export const OWNER_QUERY_KEYWORDS = ['主人', '王鸿博', '柒梦', '站主', '站长'] as const

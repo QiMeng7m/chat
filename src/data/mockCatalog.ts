@@ -25,12 +25,22 @@ export const MOCK_MODELS: ModelPublic[] = [
 
 export const MOCK_FEATURES: FeaturePublic[] = [
   {
+    id: 'ask-owner',
+    name: '了解主人',
+    description: '根据站长公开资料回答',
+    icon: '👑',
+    category: 'chat',
+    modelPolicy: 'recommended',
+    ragEnabled: true,
+  },
+  {
     id: 'free-chat',
-    name: '自由闲聊',
-    description: '想聊啥聊啥',
+    name: '自由对话',
+    description: '闲聊、写作、通用问答',
     icon: '💬',
     category: 'chat',
     modelPolicy: 'free',
+    ragEnabled: false,
   },
   {
     id: 'tech-qa',
@@ -100,5 +110,5 @@ export const MOCK_FEATURES: FeaturePublic[] = [
   },
 ]
 
-export const DEFAULT_FEATURE_ID = 'tech-qa'
+export const DEFAULT_FEATURE_ID = 'free-chat'
 export const DEFAULT_MODEL_ID = 'deepseek/deepseek-v4-flash'

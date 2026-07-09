@@ -206,7 +206,7 @@ export default function LotteryPage() {
             ? buffSummary
             : status.checkedInToday
               ? '今日抽奖机会已用完'
-              : '请先左侧打卡，获得抽奖机会'
+              : '请先打卡或补卡，获得抽奖机会'
 
   const canStartDraw = status.canDraw && prizes.length > 0
   const drawLocked = phase === 'idle' && !canStartDraw

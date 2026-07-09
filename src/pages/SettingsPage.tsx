@@ -67,9 +67,10 @@ export default function SettingsPage() {
 
             {user?.role === 'admin' ? (
               <section className="settings-section" aria-labelledby="owner-heading">
-                <h2 id="owner-heading">👑 主人资料（小柒知识库）</h2>
+                <h2 id="owner-heading">👑 站长公开资料（知识库）</h2>
                 <p>
-                  保存关于主人（王鸿博 / 柒梦）的信息到服务器。访客在对话里问到主人相关问题时，小柒会通过 API 查找并回答。
+                  维护基本信息与简历，保存后自动索引至 <code>owner-public</code> 知识库。访客在「了解主人」场景中通过
+                  RAG 检索回答；「自由对话」不会查询此资料。
                 </p>
                 <OwnerProfileEditor />
               </section>

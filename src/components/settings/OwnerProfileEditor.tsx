@@ -1,6 +1,11 @@
 import { Button, Input, Spin, message } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
-import { getOwnerProfile, updateOwnerProfile } from '../../api/ownerProfile'
+import {
+  getOwnerProfile,
+  updateOwnerProfile,
+  updateOwnerResume,
+} from '../../api/ownerProfile'
+import { ApiError } from '../../api/http'
 import type { OwnerFact, OwnerProfile } from '../../api/types'
 import { getDefaultOwnerProfile } from '../../lib/ownerProfile'
 
@@ -8,8 +13,21 @@ function newFactId(): string {
   return `fact-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
 }
 
+function formatSyncMessage(status: string, chunkCount?: number): string {
+  if (status === 'indexed') {
+    return chunkCount
+      ? `索引完成，共 ${chunkCount} 段。访客可在「了解主人」中提问。`
+      : '索引完成。访客可在「了解主人」中提问。'
+  }
+  if (status === 'failed') {
+    return '索引失败，请稍后重试或联系管理员。'
+  }
+  return '资料已保存，正在建立索引…完成后可在「了解主人」中提问。'
+}
+
 export default function OwnerProfileEditor() {
   const [profile, setProfile] = useState<OwnerProfile | null>(null)
+  const [resume, setResume] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -90,9 +108,26 @@ export default function OwnerProfileEditor() {
 
     setSaving(true)
     try {
-      const saved = await updateOwnerProfile(next)
+      const saved = await updateOwnerProfile({ ...next, syncKb: true })
       setProfile(saved)
-      message.success('主人资料已保存到服务器，小柒会据此回答相关问题')
+
+      let syncNote = '资料已保存，正在同步至知识库《基本信息》…'
+
+      if (resume.trim()) {
+        try {
+          const resumeSync = await updateOwnerResume(resume.trim())
+          syncNote = `资料已保存。${formatSyncMessage(resumeSync.status, resumeSync.chunkCount)}`
+        } catch (err) {
+          const apiErr = err instanceof ApiError ? err : null
+          if (apiErr?.status === 404) {
+            syncNote += ' 简历索引接口暂未就绪。'
+          } else {
+            throw err
+          }
+        }
+      }
+
+      message.success(syncNote)
     } catch (err) {
       message.error(err instanceof Error ? err.message : '保存失败')
     } finally {
@@ -106,6 +141,7 @@ export default function OwnerProfileEditor() {
     try {
       const saved = await updateOwnerProfile(defaults)
       setProfile(saved)
+      setResume('')
       message.info('已恢复默认主人资料')
     } catch (err) {
       message.error(err instanceof Error ? err.message : '恢复默认失败')
@@ -167,7 +203,7 @@ export default function OwnerProfileEditor() {
           value={profile.summary}
           onChange={(e) => updateField('summary', e.target.value)}
           rows={4}
-          placeholder="一段关于主人的介绍，用户问「介绍一下主人」时会用到"
+          placeholder="一段关于主人的介绍，将同步至知识库《基本信息》"
         />
       </div>
 
@@ -183,7 +219,7 @@ export default function OwnerProfileEditor() {
             <Input
               value={fact.topic}
               onChange={(e) => updateFact(fact.id, { topic: e.target.value })}
-              placeholder="主题，如：爱好、职业"
+              placeholder="主题，如：身高、爱好、职业"
               aria-label="条目主题"
             />
             <Input.TextArea
@@ -199,13 +235,27 @@ export default function OwnerProfileEditor() {
           </div>
         ))}
         {!profile.facts.length ? (
-          <p className="owner-profile-empty">暂无条目，可点击「添加条目」补充爱好、职业等信息。</p>
+          <p className="owner-profile-empty">暂无条目，可点击「添加条目」补充身高、爱好、职业等信息。</p>
         ) : null}
+      </div>
+
+      <div className="owner-profile-field owner-profile-resume">
+        <label htmlFor="owner-resume">简历 / 经历（Markdown）</label>
+        <p className="owner-profile-hint">
+          粘贴工作经历、项目与技术栈。保存后将写入知识库《简历》，供「了解主人」场景 RAG 检索。
+        </p>
+        <Input.TextArea
+          id="owner-resume"
+          value={resume}
+          onChange={(e) => setResume(e.target.value)}
+          rows={8}
+          placeholder={'# 工作经历\n\n## 2022–2024 …\n\n- 项目 A\n- 技术栈：…'}
+        />
       </div>
 
       <div className="owner-profile-actions">
         <Button type="primary" loading={saving} onClick={() => void handleSave()}>
-          保存主人资料
+          保存并更新索引
         </Button>
         <Button loading={saving} onClick={() => void handleReset()}>
           恢复默认

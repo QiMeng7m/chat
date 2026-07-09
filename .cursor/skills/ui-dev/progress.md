@@ -78,4 +78,4 @@
 | 2026-06-18 | F-01 完成：AppLayout 壳（侧栏/顶栏/滚动区/底栏）、/chat 路由、占位空状态；build 通过 |
 | 2026-06-18 | F-02 完成：Composer + ChatContext mock 流式；发送后逐字 append 助手回复；build 通过 |
 | 2026-06-18 | F-03 完成：MarkdownContent（react-markdown + remark-gfm + rehype-highlight）；助手消息渲染 MD/代码块；mock 回复含代码块示例；build 通过 |
-| 2026-06-18 | F-04～F-19 一次性完成：停止生成、SSE+mock 回退、ModelSelect、Feature/会话/登录/守卫/Settings 五主题/Admin/Vision 上传、移除 mockup-banner；build 通过 |
+| 2026-07-09 | 打卡日历 UI：设计文档 CHECKIN-CALENDAR-DESIGN.md、mockup 日历、CheckInCalendar + 补卡弹窗（mock localStorage）；tsc 通过 |

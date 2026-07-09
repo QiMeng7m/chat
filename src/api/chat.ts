@@ -3,6 +3,7 @@ import type {
   Attachment,
   ChatRequest,
   ChatStreamEvent,
+  CitationItem,
   MessageEnd,
   MessageStart,
 } from './types.ts'
@@ -70,6 +71,8 @@ function parseSseChunk(chunk: string): ChatStreamEvent | null {
       return { event: 'session', data: data as { sessionId: string } }
     case 'message_start':
       return { event: 'message_start', data: data as MessageStart }
+    case 'citations':
+      return { event: 'citations', data: data as { items: CitationItem[] } }
     case 'content_delta':
       return { event: 'content_delta', data: data as { delta: string } }
     case 'message_end':

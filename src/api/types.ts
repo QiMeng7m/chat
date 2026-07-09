@@ -46,6 +46,13 @@ export interface UiSchema {
   fields?: UiField[]
 }
 
+/** 用户端可选知识库摘要（不含 embedding、文档正文） */
+export interface KnowledgeBaseOption {
+  id: string
+  name: string
+  description?: string
+}
+
 export interface FeaturePublic {
   id: string
   name: string
@@ -55,6 +62,10 @@ export interface FeaturePublic {
   modelPolicy: ModelPolicy
   defaultModelId?: string
   uiSchema?: UiSchema
+  /** RAG 场景：是否启用知识库检索（Phase 4） */
+  ragEnabled?: boolean
+  /** 用户可选的公开知识库列表 */
+  ragKbOptions?: KnowledgeBaseOption[]
 }
 
 export interface Attachment {
@@ -123,6 +134,15 @@ export interface MessageStart {
   featureId?: string
 }
 
+export interface CitationItem {
+  index: number
+  documentId: string
+  title: string
+  excerpt?: string
+  sourceType?: string
+  sourceRef?: string
+}
+
 export interface MessageEnd {
   messageId: string
   usage?: {
@@ -130,11 +150,13 @@ export interface MessageEnd {
     completionTokens: number
     totalTokens: number
   }
+  citations?: CitationItem[]
 }
 
 export type ChatStreamEvent =
   | { event: 'session'; data: { sessionId: string } }
   | { event: 'message_start'; data: MessageStart }
+  | { event: 'citations'; data: { items: CitationItem[] } }
   | { event: 'content_delta'; data: { delta: string } }
   | { event: 'message_end'; data: MessageEnd }
   | { event: 'error'; data: { code: string; message: string } }
@@ -207,6 +229,20 @@ export type OwnerProfile = {
   summary: string
   facts: OwnerFact[]
   updatedAt: number
+}
+
+/** PUT owner-profile 可选：保存后同步至 owner-public KB */
+export type OwnerProfileUpdate = OwnerProfile & {
+  syncKb?: boolean
+}
+
+/** sync-kb / resume 异步索引响应 */
+export interface OwnerKbSyncResponse {
+  documentId: string
+  kbId: string
+  status: 'pending' | 'indexing' | 'indexed' | 'failed'
+  chunkCount?: number
+  errorMsg?: string
 }
 
 export type UserFact = {

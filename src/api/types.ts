@@ -255,7 +255,29 @@ export interface LotteryCheckIn {
   id: string
   imageUrl: string
   distanceKm: number
+  date?: string
+  kind?: 'normal' | 'makeup'
   createdAt: string
+}
+
+export type CheckInKind = 'normal' | 'makeup'
+
+export interface CheckInDayRecord {
+  date: string
+  kind: CheckInKind
+  distanceKm: number
+  imageUrl: string
+  createdAt: string
+}
+
+export interface CheckInCalendarResponse {
+  month: string
+  days: CheckInDayRecord[]
+  monthCheckInCount: number
+  normalTotal: number
+  makeupUsed: number
+  makeupEarned: number
+  makeupAvailable: number
 }
 
 export interface LotteryStatus {

@@ -1,5 +1,7 @@
 import { parseApiError, request } from './http.ts'
 import type {
+  CheckInCalendarResponse,
+  CheckInDayRecord,
   LotteryCheckInResult,
   LotteryDrawResult,
   LotteryEffectOp,
@@ -19,6 +21,8 @@ export type {
   LotteryWinRecord,
   LotteryEffectTarget,
   LotteryEffectOp,
+  CheckInCalendarResponse,
+  CheckInDayRecord,
 }
 
 export type AddLotteryPrizeInput = {
@@ -97,5 +101,22 @@ export async function submitLotteryCheckIn(
     method: 'POST',
     auth: false,
     body: { imageUrl, distanceKm },
+  })
+}
+
+export async function getCheckInCalendar(month: string): Promise<CheckInCalendarResponse> {
+  const query = new URLSearchParams({ month })
+  return request<CheckInCalendarResponse>(`/api/lottery/check-ins?${query}`, { auth: false })
+}
+
+export async function submitMakeupCheckIn(
+  date: string,
+  imageUrl: string,
+  distanceKm: number,
+): Promise<LotteryCheckInResult> {
+  return request<LotteryCheckInResult>('/api/lottery/check-in/makeup', {
+    method: 'POST',
+    auth: false,
+    body: { date, imageUrl, distanceKm },
   })
 }

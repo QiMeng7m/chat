@@ -1,4 +1,5 @@
 import { useChat } from '../chat/ChatContext'
+import { isPrimaryFeature } from '../../lib/featureOrder'
 
 export default function FeatureScroll() {
   const { features, featureId, setFeatureId } = useChat()
@@ -10,11 +11,14 @@ export default function FeatureScroll() {
           key={feature.id}
           type="button"
           role="tab"
-          className={`feature-pill${feature.id === featureId ? ' active' : ''}`}
+          className={`feature-pill${feature.id === featureId ? ' active' : ''}${
+            isPrimaryFeature(feature.id) ? ' feature-pill--primary' : ''
+          }`}
           aria-selected={feature.id === featureId}
+          title={feature.description}
           onClick={() => setFeatureId(feature.id)}
         >
-          {feature.icon} {feature.name.length > 5 ? feature.name.slice(0, 4) : feature.name}
+          {feature.icon} {feature.name}
         </button>
       ))}
     </div>

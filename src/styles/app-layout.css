@@ -965,6 +965,14 @@ body {
   color: var(--primary-hover);
 }
 
+.app-layout .feature-pill--primary {
+  font-weight: 800;
+}
+
+.app-layout .feature-pill--primary.active {
+  box-shadow: 0 0 0 1px var(--primary-soft);
+}
+
 @media (max-width: 1023px) {
   .app-layout .feature-scroll {
     display: flex;
